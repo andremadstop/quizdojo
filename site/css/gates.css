@@ -1,0 +1,98 @@
+/* Profile Gate & Auth System */
+.gate{
+  position:fixed; inset:0; z-index:50;
+  background:var(--bg-grad);
+  display:none; flex-direction:column; align-items:center; justify-content:center;
+  padding:40px 20px;
+}
+
+.gate.active{display:flex}
+body.auth-required #profileGate{display:flex}
+
+.gate .langmenu{position:absolute; top:16px; right:16px; z-index:2}
+.gate .langdrop{right:0; top:40px}
+
+/* Gate Hero Section */
+.gate-hero{
+  text-align:center;
+  margin-bottom:40px;
+}
+
+.gate-title{
+  font-size:48px;
+  font-weight:700;
+  margin:0 0 12px 0;
+  color:var(--text);
+  letter-spacing:-0.02em;
+}
+
+.gate-subtitle{
+  font-size:18px;
+  color:var(--muted);
+  margin:0;
+}
+
+/* Gate Auth Box - Compact & Centered */
+.gate-box{
+  width:min(380px, 100%);
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:32px;
+  box-shadow:0 8px 32px rgba(0,0,0,.2);
+}
+
+.gate-box input{
+  width:100%;
+  margin-bottom:12px;
+}
+
+.gate-box input:last-of-type{
+  margin-bottom:16px;
+}
+
+.gate-toggle{
+  text-align:center;
+  margin-top:16px;
+  padding-top:16px;
+  border-top:1px solid var(--border);
+}
+
+/* Gate Footer */
+.gate-footer{
+  text-align:center;
+  margin-top:40px;
+}
+
+.gate .choices{
+  display:flex; flex-direction:column; gap:10px;
+  margin-top:14px;
+}
+
+.gate .choice{
+  padding:14px 16px; border-radius:14px; border:1px solid var(--border);
+  background:var(--bg); cursor:pointer; text-align:left;
+  display:flex; flex-direction:column; gap:4px;
+}
+
+.gate .choice:hover{border-color:var(--brand); box-shadow:0 0 0 2px rgba(34,211,238,.12) inset}
+.gate .choice .label{font-weight:700; font-size:15px; color:var(--text)}
+.gate .choice .meta{font-size:12.5px; color:var(--muted)}
+
+.gate .row{gap:10px}
+.gate .footerRow{display:flex; flex-direction:column; gap:10px; align-items:flex-start}
+.gate .footerRow .row{width:100%; justify-content:flex-end}
+.gate .accountGrid{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+.gate .accountGrid .panel{margin:0}
+.gate .apiRow{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+.gate .linklike{background:none;border:none;color:var(--brand);padding:0;cursor:pointer;font-weight:600}
+.gate .linklike:hover{text-decoration:underline}
+
+/* QA Lists (Pool Editor) */
+.qa-lists{display:grid; grid-template-columns:1fr; gap:14px}
+.qa-list{border:1px dashed var(--border); border-radius:12px; padding:10px 12px; background:rgba(255,255,255,.02)}
+.qa-list .item{padding:8px 0; border-bottom:1px dashed var(--border)}
+.qa-list .item:last-child{border-bottom:0}
+.qa-list .actions{display:flex; gap:8px; flex-wrap:wrap; margin-top:6px}
+.qa-list .titleRow{display:flex; align-items:center; gap:8px; justify-content:space-between}
+.qa-list .count{font-weight:700}

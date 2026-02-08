@@ -1,0 +1,45 @@
+/* Theme Variables - Dark (default) */
+:root{
+  --bg:#1a1a1a;
+  --panel:#242424;
+  --muted:#b0b0b0;
+  --text:#f0f0f0;
+  --brand:#38a89d;
+  --accent:#f2994a;
+  --ok:#16a34a;
+  --bad:#f87171;
+  --blue:#60a5fa;
+  --border:#333333;
+  --bg-grad: radial-gradient(1400px 900px at 15% -20%, #2a2a2a 0%, #1a1a1a 55%, #121212 100%);
+  --header-bg: rgba(5,11,22,.7);
+  --font-scale: 1;
+  --card-padding: 20px;
+  --btn-good-bg: #07381a;
+  --btn-good-fg: #86efac;
+  --btn-bad-bg: #3b0a0a;
+  --btn-bad-fg: #fecaca;
+  --btn-warn-bg: #3a2306;
+  --btn-warn-fg: #fed7aa;
+}
+
+/* Theme Variables - Light */
+:root[data-theme="light"]{
+  --bg:#f7f5f2;
+  --panel:#ffffff;
+  --muted:#4f4f4f;
+  --text:#202020;
+  --brand:#257268;
+  --accent:#a84f12;
+  --ok:#15803d;
+  --bad:#b91c1c;
+  --blue:#1d4ed8;
+  --border:#e0ddd8;
+  --bg-grad: radial-gradient(1200px 700px at 20% -10%, #f1ece5 0%, #f7f5f2 60%, #ffffff 100%);
+  --header-bg: rgba(255,255,255,.8);
+  --btn-good-bg: #dcfce7;
+  --btn-good-fg: #15803d;
+  --btn-bad-bg: #fee2e2;
+  --btn-bad-fg: #b91c1c;
+  --btn-warn-bg: #fef3c7;
+  --btn-warn-fg: #a84f12;
+}

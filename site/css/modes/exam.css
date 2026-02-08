@@ -1,0 +1,58 @@
+/* Exam Mode Styles */
+
+/* Exam Navigator */
+.navgrid{display:grid; grid-template-columns: repeat(auto-fill, minmax(42px, 1fr)); gap:6px; margin-top:8px}
+
+.navbtn{display:flex; align-items:center; justify-content:center; padding:8px 0; border-radius:10px; border:1px solid var(--border); background:var(--bg); cursor:pointer; user-select:none}
+
+.navbtn.answered{background:rgba(37,99,235,.25); border-color:rgba(37,99,235,.5)}
+.navbtn.current{box-shadow:0 0 0 2px rgba(34,211,238,.25) inset; border-color:var(--brand)}
+
+/* Exam Timer Animation (Consolidated) */
+.exam-timer-snake {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  z-index: 1000;
+  overflow: visible;
+}
+
+.exam-timer-snake svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.exam-timer-snake .fuse-line {
+  fill: none;
+  stroke: #cc5500;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.exam-timer-snake.warning .fuse-line {
+  stroke: #d97706;
+}
+
+.exam-timer-snake.danger .fuse-line {
+  stroke: #dc2626;
+}
+
+/* Alternative rect-based timer (if using rect instead of path) */
+.exam-timer-snake rect {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 3;
+  stroke-linecap: round;
+  transition: stroke 0.3s ease;
+}
+
+.exam-timer-snake.warning rect {
+  stroke: #fbbf24;
+}
+
+.exam-timer-snake.danger rect {
+  stroke: #ef4444;
+  animation: pulseDanger 1s ease-in-out infinite;
+}

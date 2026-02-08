@@ -1,0 +1,66 @@
+/* Swipe Mode Styles */
+.swipe-arena{
+  display:flex; flex-direction:column; align-items:center;
+  min-height:320px; position:relative; padding:20px 0;
+}
+
+.swipe-card{
+  width:100%; max-width:480px; min-height:220px;
+  background:var(--panel); border:2px solid var(--border); border-radius:16px;
+  padding:var(--card-padding); cursor:grab; user-select:none;
+  transition:transform .3s ease, opacity .3s ease;
+  position:relative;
+}
+
+.swipe-result-card{cursor:default}
+
+.swipe-card-front{text-align:center}
+
+.swipe-statement{font-size:1.2em; line-height:1.5; margin-bottom:12px}
+
+.swipe-hint{
+  display:flex; justify-content:space-between; padding:12px 8px 0;
+  font-size:.75em; color:var(--muted); opacity:.6;
+}
+
+.swipe-card.swiping-right{border-color:var(--ok)}
+.swipe-card.swiping-left{border-color:var(--bad)}
+
+.swipe-out-right{transform:translateX(120%) rotate(20deg); opacity:0}
+.swipe-out-left{transform:translateX(-120%) rotate(-20deg); opacity:0}
+
+.swipe-card-back{
+  cursor:default; text-align:center;
+  animation: fadeSlideIn .3s ease-out;
+}
+
+.swipe-back-result{font-size:1.3em; font-weight:bold; margin-bottom:12px}
+.swipe-back-result.swipe-correct{color:var(--ok)}
+.swipe-back-result.swipe-wrong{color:var(--bad)}
+
+.swipe-result-icon{font-size:1.5em}
+
+.swipe-back-explanation{
+  font-size:1.05em; line-height:1.6; color:var(--text);
+  padding:12px 0; border-top:1px solid var(--border); margin-top:8px;
+}
+
+.swipe-back-actions{
+  display:flex; gap:12px; justify-content:center; margin-top:16px;
+}
+
+.swipe-controls{display:flex; gap:12px; justify-content:center; margin-top:16px}
+
+.swipe-btn{min-width:120px; justify-content:center; font-size:1em}
+.swipe-btn-false:hover{border-color:var(--bad); color:var(--bad)}
+.swipe-btn-true:hover{border-color:var(--ok); color:var(--ok)}
+
+.swipe-progress{
+  display:flex; justify-content:space-between; width:100%;
+  margin-top:12px; font-size:.9em; color:var(--muted);
+}
+
+.swipe-score{ margin-left:auto; text-align:right; min-width:120px; }
+
+.swipe-result{ text-align:center; padding:var(--card-padding); }
+.swipe-result-score{ font-size:2.5em; font-weight:bold; color:var(--brand); margin:12px 0; }

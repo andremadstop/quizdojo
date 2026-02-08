@@ -1,0 +1,39 @@
+# Environment
+.env
+.env.local
+*.env
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Dependencies
+node_modules/
+package-lock.json
+
+# Database
+*.sql.backup
+backups/
+
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE
+.vscode/
+.idea/
+*.sublime-*
+
+# Internal files (keep these private)
+TASKS.md
+CLAUDE_UPDATES.md
+HANDOFF*.md
+AGENT_*.md
+SYNC_NOTES.md
+.claude/
+archive/

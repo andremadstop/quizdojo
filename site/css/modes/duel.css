@@ -1,0 +1,7 @@
+/* Duel Mode Styles */
+.duel-score{font-weight:700}
+
+.duel-panel{display:flex; flex-direction:column; gap:10px}
+
+.duel-play{margin-top:12px}
+.duel-play .row{flex-wrap:wrap}

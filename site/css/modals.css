@@ -1,0 +1,65 @@
+/* Modal System */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 20000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s ease;
+}
+
+.modal {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  animation: scaleIn 0.2s ease;
+}
+
+.modal-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: var(--text);
+}
+
+.modal-message {
+  margin-bottom: 20px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+/* Info Overlay (Legacy) */
+.info-overlay{
+  position:fixed; inset:0; z-index:60;
+  background:rgba(8,12,20,.6);
+  display:none; align-items:center; justify-content:center;
+}
+
+.info-overlay.active{display:flex}
+
+.info-card{
+  width:min(640px, 92vw);
+  background:linear-gradient(180deg, rgba(15,23,42,.96), rgba(8,13,26,.96));
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:16px 18px;
+  box-shadow:0 20px 60px rgba(0,0,0,.45);
+}
+
+.info-card .head{display:flex; align-items:center; justify-content:space-between; gap:8px}
+
+/* Legacy Modal Backdrop */
+.modal-backdrop{position:fixed; inset:0; background:rgba(0,0,0,.45); display:flex; align-items:center; justify-content:center; z-index:9999}
+.modal-backdrop.hidden{display:none}

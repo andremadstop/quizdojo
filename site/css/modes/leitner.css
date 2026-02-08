@@ -1,0 +1,9 @@
+/* Leitner Mode Styles */
+.leitner-box{cursor:pointer; border:1px solid var(--border); border-radius:12px; padding:12px; transition:all .15s ease}
+.leitner-box.selected{border-color:var(--brand); box-shadow:0 0 0 2px rgba(34,211,238,.15) inset}
+
+.leitner-set-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:10px}
+
+.leitner-set-card{border:1px solid var(--border); border-radius:12px; padding:12px; background:var(--bg); cursor:pointer; transition:all .15s ease}
+.leitner-set-card.selected{border-color:var(--brand); box-shadow:0 0 0 2px rgba(34,211,238,.15) inset}
+.leitner-set-card .meta{font-size:12px; color:var(--muted)}
