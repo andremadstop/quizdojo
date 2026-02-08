@@ -1,6 +1,6 @@
 # Database Schema Documentation
 
-Complete reference for the QuizDoji PostgreSQL database schema.
+Complete reference for the QuizDojo PostgreSQL database schema.
 
 ## 📋 Table of Contents
 

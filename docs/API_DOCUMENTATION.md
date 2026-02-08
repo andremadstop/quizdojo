@@ -1,6 +1,6 @@
 # API Documentation
 
-Complete API reference for QuizDoji backend.
+Complete API reference for QuizDojo backend.
 
 ## 📋 Table of Contents
 

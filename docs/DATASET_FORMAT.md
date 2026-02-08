@@ -1,6 +1,6 @@
 # Dataset Format Specification
 
-This document describes the JSON format for question pool datasets in QuizDoji.
+This document describes the JSON format for question pool datasets in QuizDojo.
 
 ## 📋 Table of Contents
 
@@ -17,7 +17,7 @@ This document describes the JSON format for question pool datasets in QuizDoji.
 
 ## 🏗️ Basic Structure
 
-A QuizDoji dataset is a JSON file with the following structure:
+A QuizDojo dataset is a JSON file with the following structure:
 
 ```json
 {
@@ -193,7 +193,7 @@ Each question must have 2-10 answers:
 
 ## 🌍 Multilingual Pools
 
-QuizDoji supports multilingual question pools. Users can toggle question language in the UI.
+QuizDojo supports multilingual question pools. Users can toggle question language in the UI.
 
 ### How It Works
 

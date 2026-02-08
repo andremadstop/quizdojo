@@ -1,6 +1,6 @@
 # Architecture Overview
 
-This document provides a comprehensive overview of QuizDoji's system architecture, design decisions, and technical implementation.
+This document provides a comprehensive overview of QuizDojo's system architecture, design decisions, and technical implementation.
 
 ## 📋 Table of Contents
 
@@ -19,7 +19,7 @@ This document provides a comprehensive overview of QuizDoji's system architectur
 
 ## 🏗️ System Overview
 
-QuizDoji is a full-stack web application for exam training and learning with spaced repetition.
+QuizDojo is a full-stack web application for exam training and learning with spaced repetition.
 
 ### High-Level Architecture
 

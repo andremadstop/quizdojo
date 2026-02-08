@@ -1,4 +1,4 @@
-# QuizDoji
+# QuizDojo
 
 > Multilingual exam training platform with spaced repetition, gamification, and social features
 

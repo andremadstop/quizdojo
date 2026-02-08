@@ -1,6 +1,6 @@
 # Installation & Deployment Guide
 
-This guide covers production deployment scenarios for QuizDoji.
+This guide covers production deployment scenarios for QuizDojo.
 
 ## 📋 Table of Contents
 
@@ -372,7 +372,7 @@ Protect against brute-force attacks:
 ```bash
 sudo apt install fail2ban
 
-# Create jail for QuizDoji
+# Create jail for QuizDojo
 sudo nano /etc/fail2ban/jail.local
 ```
 

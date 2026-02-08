@@ -1,6 +1,6 @@
-# Getting Started with QuizDoji
+# Getting Started with QuizDojo
 
-Welcome to QuizDoji! This guide will help you set up and run the application on your local machine or server.
+Welcome to QuizDojo! This guide will help you set up and run the application on your local machine or server.
 
 ## 📋 Prerequisites
 

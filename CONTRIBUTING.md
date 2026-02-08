@@ -1,6 +1,6 @@
-# Contributing to QuizDoji
+# Contributing to QuizDojo
 
-Thank you for your interest in contributing to QuizDoji! This document provides guidelines and instructions for contributing.
+Thank you for your interest in contributing to QuizDojo! This document provides guidelines and instructions for contributing.
 
 ## 📜 Code of Conduct
 
@@ -57,7 +57,7 @@ What actually happens
 - OS: [e.g., Ubuntu 22.04]
 - Browser: [e.g., Firefox 120]
 - Docker Version: [e.g., 24.0.5]
-- QuizDoji Version: [e.g., v1.0.0]
+- QuizDojo Version: [e.g., v1.0.0]
 
 ## Additional Context
 Any other relevant information
@@ -319,7 +319,7 @@ Before submitting a PR, ensure:
 
 ## 🌍 Translation Contributions
 
-Help translate QuizDoji into more languages!
+Help translate QuizDojo into more languages!
 
 ### Adding a New Language:
 
@@ -388,4 +388,4 @@ By contributing, you agree that your contributions will be licensed under the GP
 
 ---
 
-**Thank you for making QuizDoji better! 🎓**
+**Thank you for making QuizDojo better! 🎓**
