@@ -4,6 +4,23 @@
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
+---
+
+## ⚡ Schnellstart
+
+**Neu hier? Direkt loslegen!** → **[3-Minuten Installation](QUICKSTART.md)** 🚀
+
+```bash
+git clone https://github.com/andremadstop/quizdojo.git
+cd quizdojo
+./install.sh
+docker compose up -d
+```
+
+**Fertig!** Öffne http://localhost:3000
+
+---
+
 ## ✨ Features
 
 - 🎯 **6 Learning Modes**
