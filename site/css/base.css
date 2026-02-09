@@ -1,13 +1,15 @@
 /* Base Styles & Reset */
 *{box-sizing:border-box}
 
-html,body{height:100%}
+html{height:100%}
 
 body{
   margin:0; font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial,Inter,Ubuntu;
   background: var(--bg-grad);
   color:var(--text);
   display:flex; flex-direction:column;
+  min-height:100vh;
+  overflow-y:auto;
   font-size: calc(15px * var(--font-scale));
 }
 

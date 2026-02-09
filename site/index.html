@@ -5000,7 +5000,32 @@ async function apiLeaderboards(scope='global', poolId=null, limit=10){
 }
 
 async function loadPools(){
-  if(!accessToken){
+  // Try to load pools even without accessToken (for guest mode)
+  try{
+    const pools = await apiListPools();
+    const raw = Array.isArray(pools) ? pools : [];
+    const byName = new Map();
+    for(const p of raw){
+      const key = (p?.name || '').toLowerCase();
+      if(!key) continue;
+      const existing = byName.get(key);
+      const pTime = new Date(p.updated_at || 0).getTime();
+      const eTime = existing ? new Date(existing.updated_at || 0).getTime() : -1;
+      if(!existing || (pTime && pTime >= eTime)){
+        byName.set(key, p);
+      }
+    }
+    POOLS = Array.from(byName.values());
+    POOLS_BY_NAME = new Map(POOLS.map(p=>[p.name, p]));
+    POOLS_BY_ID = new Map(POOLS.map(p=>[p.id, p]));
+    POOL_LANGS = new Map();
+    refreshPoolSelect(ACTIVE_POOL?.name);
+    refreshSwipePoolSelect();
+    if(currentUser){ loadLeitnerSets(); }
+    return POOLS;
+  }catch(e){
+    // If API call fails (no auth or server error), keep empty pools
+    console.warn('Failed to load pools:', e);
     POOLS = [];
     POOLS_BY_NAME = new Map();
     POOLS_BY_ID = new Map();
@@ -5008,27 +5033,6 @@ async function loadPools(){
     refreshSwipePoolSelect();
     return [];
   }
-  const pools = await apiListPools();
-  const raw = Array.isArray(pools) ? pools : [];
-  const byName = new Map();
-  for(const p of raw){
-    const key = (p?.name || '').toLowerCase();
-    if(!key) continue;
-    const existing = byName.get(key);
-    const pTime = new Date(p.updated_at || 0).getTime();
-    const eTime = existing ? new Date(existing.updated_at || 0).getTime() : -1;
-    if(!existing || (pTime && pTime >= eTime)){
-      byName.set(key, p);
-    }
-  }
-  POOLS = Array.from(byName.values());
-  POOLS_BY_NAME = new Map(POOLS.map(p=>[p.name, p]));
-  POOLS_BY_ID = new Map(POOLS.map(p=>[p.id, p]));
-  POOL_LANGS = new Map();
-  refreshPoolSelect(ACTIVE_POOL?.name);
-  refreshSwipePoolSelect();
-  if(currentUser){ loadLeitnerSets(); }
-  return POOLS;
 }
 function refreshSwipePoolSelect(){
   const sel = $('#swipePoolSelect');
@@ -7884,7 +7888,13 @@ async function appendMissingLangsToPool(ds, pool){
   await getPoolLangs(pool.id);
 }
 async function ensureDefaultPools(){
-  if(defaultImportRunning || !accessToken) return;
+  if(defaultImportRunning) return;
+  // Skip import if no auth token, but still reload pools
+  if(!accessToken){
+    console.log('Guest mode: skipping default pool import, loading existing pools...');
+    await loadPools();
+    return;
+  }
   await runMergeAuditStrict();
   if(!MERGE_AUDIT_STRICT.ok){
     console.warn(MERGE_AUDIT_STRICT.message);
@@ -9005,8 +9015,10 @@ async function boot(){
     await postLoginInit();
   } else if (!requireLogin) {
     // Open by default: initialize app even without login
-    await loadPools();
-    await ensureDefaultPools();
+    await ensureDefaultPools(); // This will call loadPools() internally
+    // Force refresh pool selects for guest mode
+    refreshPoolSelect();
+    refreshSwipePoolSelect();
   }
   const savedTab = localStorage.getItem(TAB_KEY(PROFILE_ID));
   const allowedTabs = Array.from(document.querySelectorAll('button.tabbtn'))
