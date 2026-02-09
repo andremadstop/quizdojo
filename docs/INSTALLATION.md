@@ -45,8 +45,8 @@ sudo chmod +x /usr/local/bin/docker-compose
 
 ```bash
 # Clone repository
-git clone https://github.com/YOUR_USERNAME/quizdoji.git
-cd quizdoji
+git clone https://github.com/andremadstop/quizdojo.git
+cd quizdojo
 
 # Configure environment
 cp server-mvp/.env.example server-mvp/.env
@@ -262,7 +262,7 @@ Complete reference of environment variables:
 
 ```bash
 # Backup database
-docker exec quizdoji_postgres pg_dump -U pruefungstrainer pruefungstrainer > backup_$(date +%Y%m%d_%H%M%S).sql
+docker exec quizdojo_postgres pg_dump -U pruefungstrainer pruefungstrainer > backup_$(date +%Y%m%d_%H%M%S).sql
 
 # Compress backup
 gzip backup_*.sql
@@ -270,17 +270,17 @@ gzip backup_*.sql
 
 ### Automated Backups (Cron)
 
-Create `/usr/local/bin/quizdoji-backup.sh`:
+Create `/usr/local/bin/quizdojo-backup.sh`:
 
 ```bash
 #!/bin/bash
-BACKUP_DIR="/var/backups/quizdoji"
+BACKUP_DIR="/var/backups/quizdojo"
 DATE=$(date +%Y%m%d_%H%M%S)
 
 mkdir -p $BACKUP_DIR
 
 # Backup database
-docker exec quizdoji_postgres pg_dump -U pruefungstrainer pruefungstrainer | gzip > $BACKUP_DIR/db_$DATE.sql.gz
+docker exec quizdojo_postgres pg_dump -U pruefungstrainer pruefungstrainer | gzip > $BACKUP_DIR/db_$DATE.sql.gz
 
 # Keep only last 30 days
 find $BACKUP_DIR -name "db_*.sql.gz" -mtime +30 -delete
@@ -289,11 +289,11 @@ find $BACKUP_DIR -name "db_*.sql.gz" -mtime +30 -delete
 Make executable and add to crontab:
 
 ```bash
-chmod +x /usr/local/bin/quizdoji-backup.sh
+chmod +x /usr/local/bin/quizdojo-backup.sh
 
 # Run daily at 2 AM
 crontab -e
-0 2 * * * /usr/local/bin/quizdoji-backup.sh
+0 2 * * * /usr/local/bin/quizdojo-backup.sh
 ```
 
 ### Restore Backup
@@ -303,7 +303,7 @@ crontab -e
 gunzip backup.sql.gz
 
 # Restore
-cat backup.sql | docker exec -i quizdoji_postgres psql -U pruefungstrainer -d pruefungstrainer
+cat backup.sql | docker exec -i quizdojo_postgres psql -U pruefungstrainer -d pruefungstrainer
 ```
 
 ---
@@ -314,7 +314,7 @@ cat backup.sql | docker exec -i quizdoji_postgres psql -U pruefungstrainer -d pr
 
 ```bash
 # Backup database
-docker exec quizdoji_postgres pg_dump -U pruefungstrainer pruefungstrainer > backup_pre_update.sql
+docker exec quizdojo_postgres pg_dump -U pruefungstrainer pruefungstrainer > backup_pre_update.sql
 
 # Backup .env
 cp server-mvp/.env server-mvp/.env.backup
@@ -323,7 +323,7 @@ cp server-mvp/.env server-mvp/.env.backup
 ### Step 2: Pull Updates
 
 ```bash
-cd /path/to/quizdoji
+cd /path/to/quizdojo
 git pull origin main
 ```
 
@@ -346,7 +346,7 @@ docker-compose logs -f
 Check for database migrations in update notes. If present:
 
 ```bash
-docker exec -it quizdoji_postgres psql -U pruefungstrainer -d pruefungstrainer -f /path/to/migration.sql
+docker exec -it quizdojo_postgres psql -U pruefungstrainer -d pruefungstrainer -f /path/to/migration.sql
 ```
 
 ---
@@ -379,11 +379,11 @@ sudo nano /etc/fail2ban/jail.local
 Add:
 
 ```ini
-[quizdoji-api]
+[quizdojo-api]
 enabled = true
 port = 8000
-filter = quizdoji-api
-logpath = /var/log/quizdoji/api.log
+filter = quizdojo-api
+logpath = /var/log/quizdojo/api.log
 maxretry = 5
 bantime = 3600
 ```
@@ -426,7 +426,7 @@ docker-compose ps
 ### Resource Usage
 
 ```bash
-docker stats quizdoji_api quizdoji_postgres quizdoji_frontend
+docker stats quizdojo_api quizdojo_postgres quizdojo_frontend
 ```
 
 ### Log Monitoring
@@ -467,7 +467,7 @@ sudo lsof -i :8000
 
 ```bash
 # Test connection
-docker exec quizdoji_postgres psql -U pruefungstrainer -d pruefungstrainer -c "SELECT 1;"
+docker exec quizdojo_postgres psql -U pruefungstrainer -d pruefungstrainer -c "SELECT 1;"
 
 # Check DATABASE_URL in .env
 ```
@@ -489,9 +489,9 @@ sudo certbot renew --dry-run
 ## 📞 Support
 
 For deployment issues:
-- Check [GitHub Issues](https://github.com/YOUR_USERNAME/quizdoji/issues)
+- Check [GitHub Issues](https://github.com/andremadstop/quizdojo/issues)
 - Read [Architecture Documentation](ARCHITECTURE.md)
-- Join [Community Discussions](https://github.com/YOUR_USERNAME/quizdoji/discussions)
+- Join [Community Discussions](https://github.com/andremadstop/quizdojo/discussions)
 
 ---
 

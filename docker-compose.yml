@@ -4,7 +4,7 @@ services:
   # PostgreSQL Database
   postgres:
     image: postgres:16-alpine
-    container_name: quizdoji_postgres
+    container_name: quizdojo_postgres
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-pruefungstrainer}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
@@ -21,14 +21,14 @@ services:
       retries: 5
     restart: unless-stopped
     networks:
-      - quizdoji-network
+      - quizdojo-network
 
   # Express.js API Backend
   api:
     build:
       context: ./server-mvp/node-app
       dockerfile: Dockerfile
-    container_name: quizdoji_api
+    container_name: quizdojo_api
     ports:
       - "${API_PORT:-8000}:8000"
     environment:
@@ -64,7 +64,7 @@ services:
         condition: service_healthy
     restart: unless-stopped
     networks:
-      - quizdoji-network
+      - quizdojo-network
     healthcheck:
       test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8000/health"]
       interval: 30s
@@ -74,7 +74,7 @@ services:
   # Nginx Frontend
   frontend:
     image: nginx:alpine
-    container_name: quizdoji_frontend
+    container_name: quizdojo_frontend
     ports:
       - "${FRONTEND_PORT:-3000}:80"
     volumes:
@@ -84,12 +84,12 @@ services:
       - api
     restart: unless-stopped
     networks:
-      - quizdoji-network
+      - quizdojo-network
 
 volumes:
   pgdata:
     driver: local
 
 networks:
-  quizdoji-network:
+  quizdojo-network:
     driver: bridge

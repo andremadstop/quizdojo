@@ -749,7 +749,7 @@ graph LR
 
 ### Networking
 
-**Bridge network** (`quizdoji-network`):
+**Bridge network** (`quizdojo-network`):
 - Internal communication between containers
 - Service discovery by container name
 - Isolated from host

@@ -67,8 +67,8 @@ docker compose up -d
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/YOUR_USERNAME/quizdoji.git
-cd quizdoji
+git clone https://github.com/andremadstop/quizdojo.git
+cd quizdojo
 
 # 2. Configure environment
 cp server-mvp/.env.example server-mvp/.env
@@ -145,8 +145,8 @@ npm run dev  # if nodemon configured
 ## 💬 Support
 
 - 📖 [Documentation](docs/)
-- 🐛 [Issue Tracker](https://github.com/YOUR_USERNAME/quizdoji/issues)
-- 💡 [Discussions](https://github.com/YOUR_USERNAME/quizdoji/discussions)
+- 🐛 [Issue Tracker](https://github.com/andremadstop/quizdojo/issues)
+- 💡 [Discussions](https://github.com/andremadstop/quizdojo/discussions)
 
 ## 🙏 Acknowledgments
 

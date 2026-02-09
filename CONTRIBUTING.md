@@ -27,7 +27,7 @@ We are committed to providing a welcoming and inspiring community for all. Pleas
 ### Reporting Bugs
 
 Before creating a bug report:
-1. Check existing [Issues](https://github.com/YOUR_USERNAME/quizdoji/issues) to avoid duplicates
+1. Check existing [Issues](https://github.com/andremadstop/quizdojo/issues) to avoid duplicates
 2. Verify the bug on the latest version
 
 **Good bug reports include:**
@@ -66,7 +66,7 @@ Any other relevant information
 ### Suggesting Features
 
 Feature requests are welcome! Please:
-1. Check [existing feature requests](https://github.com/YOUR_USERNAME/quizdoji/issues?q=is%3Aissue+label%3Aenhancement)
+1. Check [existing feature requests](https://github.com/andremadstop/quizdojo/issues?q=is%3Aissue+label%3Aenhancement)
 2. Explain **why** this feature would be useful
 3. Provide use cases and examples
 
@@ -83,8 +83,8 @@ Look for issues labeled:
 1. **Fork the repository**
    ```bash
    # Click "Fork" on GitHub, then clone your fork
-   git clone https://github.com/YOUR_USERNAME/quizdoji.git
-   cd quizdoji
+   git clone https://github.com/andremadstop/quizdojo.git
+   cd quizdojo
    ```
 
 2. **Set up development environment**
@@ -371,8 +371,8 @@ Contribute high-quality question pools:
 
 ## 🤝 Community
 
-- **Discussions**: [GitHub Discussions](https://github.com/YOUR_USERNAME/quizdoji/discussions)
-- **Issues**: [Issue Tracker](https://github.com/YOUR_USERNAME/quizdoji/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/andremadstop/quizdojo/discussions)
+- **Issues**: [Issue Tracker](https://github.com/andremadstop/quizdojo/issues)
 - **Security**: See [SECURITY.md](SECURITY.md) for reporting vulnerabilities
 
 ## 🙏 Recognition

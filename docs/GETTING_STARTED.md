@@ -22,8 +22,8 @@ The easiest way to get started is using Docker Compose, which sets up all servic
 ### Step 1: Clone the Repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/quizdoji.git
-cd quizdoji
+git clone https://github.com/andremadstop/quizdojo.git
+cd quizdojo
 ```
 
 ### Step 2: Configure Environment
@@ -84,9 +84,9 @@ docker-compose ps
 ```
 
 You should see three containers running:
-- `quizdoji_postgres` (PostgreSQL)
-- `quizdoji_api` (Express.js API)
-- `quizdoji_frontend` (Nginx)
+- `quizdojo_postgres` (PostgreSQL)
+- `quizdojo_api` (Express.js API)
+- `quizdojo_frontend` (Nginx)
 
 ### Step 5: Access the Application
 
@@ -373,8 +373,8 @@ Change question language:
 ## 🆘 Getting Help
 
 - 📖 [Full Documentation](../README.md)
-- 🐛 [Issue Tracker](https://github.com/YOUR_USERNAME/quizdoji/issues)
-- 💬 [Discussions](https://github.com/YOUR_USERNAME/quizdoji/discussions)
+- 🐛 [Issue Tracker](https://github.com/andremadstop/quizdojo/issues)
+- 💬 [Discussions](https://github.com/andremadstop/quizdojo/discussions)
 
 ---
 

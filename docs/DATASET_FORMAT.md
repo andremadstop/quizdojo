@@ -442,7 +442,7 @@ Convert from Anki, Quizlet, or CSV:
 
 ```bash
 # Example: CSV to JSON converter (community-contributed)
-python scripts/csv_to_quizdoji.py input.csv output.json
+python scripts/csv_to_quizdojo.py input.csv output.json
 ```
 
 ---
@@ -473,9 +473,9 @@ To share your dataset with the community:
 
 ## 📞 Questions?
 
-- Check [GitHub Discussions](https://github.com/YOUR_USERNAME/quizdoji/discussions)
+- Check [GitHub Discussions](https://github.com/andremadstop/quizdojo/discussions)
 - Read [POOL_CREATOR_PROMPT.md](POOL_CREATOR_PROMPT.md)
-- Open an [Issue](https://github.com/YOUR_USERNAME/quizdoji/issues)
+- Open an [Issue](https://github.com/andremadstop/quizdojo/issues)
 
 ---
 
