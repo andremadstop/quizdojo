@@ -25,11 +25,11 @@ docker compose up -d
 
 - 🎯 **6 Learning Modes**
   - **Training**: Free practice with immediate feedback
-  - **Swipe**: Tinder-style binary quiz (True/False)
+  - **Swipe**: Tinder-style binary quiz (True/False) - swipe right/left or use keyboard
   - **Speedrun**: Time-based challenges (1/5/10 minutes)
-  - **Exam**: Simulated test environment with timer
-  - **Leitner**: Spaced repetition system with 5 boxes
-  - **Duels**: Challenge friends to 1v1 quizzes
+  - **Exam**: Simulated test environment with timer and focus mode overlay
+  - **Leitner**: Spaced repetition system with 5 boxes + "Road to Mastery" progress tracking
+  - **Duels**: Challenge friends to 1v1 quizzes with real-time scoring
 
 - 🌍 **3 Languages**: German, English, Russian (DE/EN/RU)
   - Full UI translation
@@ -37,20 +37,24 @@ docker compose up -d
   - Multilingual question pools
 
 - 🏆 **Gamification**
-  - XP and level system
-  - Daily streaks
-  - Badges and achievements
-  - Global leaderboards
-  - Community features
+  - XP and level system with progress bars
+  - Daily streaks with longest streak tracking
+  - 10 persistent badges (database-backed achievements)
+  - Global and weekly leaderboards
+  - Community features (friends, duels, stats)
+  - Leitner mastery milestones (25%, 50%, 75%, 100%) with confetti celebrations
 
 - 🐳 **Docker-Ready**: Complete Docker Compose setup for easy self-hosting
 
-- 🔒 **Security**
-  - JWT authentication with refresh tokens
-  - bcrypt password hashing
-  - Rate limiting
+- 🔒 **Security & Authentication**
+  - Magic Link authentication (email-based, passwordless)
+  - Optional guest mode (training + swipe without account)
+  - JWT access tokens + httpOnly refresh cookies
+  - bcrypt password hashing (for optional password login)
+  - Rate limiting on all endpoints
   - HTTPS-ready
   - GDPR-compliant privacy features
+  - Comprehensive admin settings panel (feature flags, languages, branding)
 
 ## 🚀 Quick Start
 
@@ -95,10 +99,11 @@ See [docs/INSTALLATION.md](docs/INSTALLATION.md) for detailed manual setup instr
 
 ## 🏗️ Architecture
 
-- **Frontend**: Single-page application (HTML/CSS/JS), modular CSS architecture
+- **Frontend**: Single-page application (HTML/CSS/JS), modular CSS architecture (14 CSS files)
 - **Backend**: Express.js REST API with middleware (auth, rate limiting, audit logging)
-- **Database**: PostgreSQL 16 with 24 tables, UUID primary keys
-- **Authentication**: JWT access tokens + httpOnly refresh cookies
+- **Database**: PostgreSQL 16 with 26 tables (including leitner_milestones, leitner_stats), UUID primary keys
+- **Authentication**: Magic Link (email-based) or optional password, JWT access tokens + httpOnly refresh cookies
+- **Admin Panel**: Comprehensive settings manager with failsafe validation
 
 ## 📊 Tech Stack
 

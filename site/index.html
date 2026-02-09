@@ -80,50 +80,99 @@
   </symbol>
 </svg>
 
-<div id="profileGate" class="gate active" aria-hidden="false">
-  <div class="langmenu">
-    <button class="btn langbtn" id="btnLangMenuGate" title="Sprache wechseln" data-i18n-title="aria.langMenu" data-i18n-aria="aria.langMenu">🌐 <span id="langLabelGate">DE</span></button>
-    <div class="langdrop" id="langMenuGate">
-      <button data-lang="de">Deutsch</button>
-      <button data-lang="en">English</button>
-      <button data-lang="ru">Русский</button>
-    </div>
+<div id="profileGate" class="gate" aria-hidden="true">
+  <div style="position:absolute; top:16px; right:16px; z-index:10">
+    <button class="btn" id="btnThemeGate" title="Hell/Dunkel umschalten" aria-label="Theme wechseln">🌗</button>
   </div>
 
   <div class="gate-hero">
     <h1 class="gate-title">🏋️ Prüfungstrainer</h1>
-    <p class="gate-subtitle" data-i18n="gate.subtitle">Bitte einloggen oder Account anlegen.</p>
+    <p class="gate-subtitle" data-i18n="gate.subtitle">Lerne smarter mit 6 verschiedenen Modi</p>
   </div>
 
   <div class="gate-box">
-    <div id="gateLoginFields">
-      <input type="text" id="gateLoginEmail" placeholder="Benutzername oder E-Mail" autocomplete="username email" />
-      <input type="password" id="gateLoginPassword" placeholder="Passwort" autocomplete="current-password" />
-      <button class="btn primary" id="btnGateLogin" style="width:100%" data-i18n="gate.login.btn">Login</button>
-      <button class="linklike" id="btnGateForgotLink" style="margin-top:8px; font-size:13px" data-i18n="gate.forgot.link">Passwort vergessen?</button>
+    <!-- Magic Link Login/Register -->
+    <div id="gateWelcome">
+      <h3 style="text-align:center; margin:0 0 16px 0; font-size:18px">Willkommen! 👋</h3>
+      <p class="muted" style="margin-bottom:16px; font-size:14px; text-align:center">
+        <strong>Neu hier?</strong> Einfach E-Mail eingeben – wir legen automatisch einen Account an!<br>
+        <strong>Schon dabei?</strong> Mit der gleichen E-Mail einloggen.
+      </p>
+      <form id="gateLoginFields">
+        <div style="position:relative">
+          <input
+            type="email"
+            id="gateLoginEmail"
+            placeholder="deine@email.de"
+            autocomplete="email"
+            required
+            style="padding-right:40px"
+          />
+          <span id="emailValidIcon" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); display:none; color:#10b981; font-size:20px">✓</span>
+        </div>
+        <button type="submit" class="btn primary" id="btnRequestMagicLink" style="width:100%; position:relative">
+          <span id="btnRequestText">📧 Code per Email senden</span>
+          <span id="btnRequestSpinner" class="spinner" style="display:none; position:absolute; right:16px; top:50%; transform:translateY(-50%)"></span>
+        </button>
+        <div class="muted" style="margin-top:12px; font-size:12px; text-align:center">
+          Kein Passwort nötig! Wir schicken dir einen 6-stelligen Code + Login-Link. 🎉
+        </div>
+      </form>
     </div>
 
-    <div id="gateRegisterFields" class="hidden">
-      <input type="text" id="gateRegisterUsername" placeholder="Benutzername" autocomplete="username" />
-      <input type="text" id="gateRegisterEmail" placeholder="E-Mail" autocomplete="email" />
-      <input type="password" id="gateRegisterPassword" placeholder="Passwort" autocomplete="new-password" />
-      <input type="password" id="gateRegisterPassword2" placeholder="Passwort wiederholen" autocomplete="new-password" />
-      <button class="btn primary" id="btnGateRegister" style="width:100%" data-i18n="gate.register.btn">Account anlegen</button>
+    <!-- Code Entry (shown after requesting) -->
+    <div id="gateCodeEntry" class="hidden">
+      <p id="gateCodeHeader" style="margin-bottom:16px; text-align:center; font-size:14px; line-height:1.6">
+        Code wurde gesendet! 📧
+      </p>
+      <div style="position:relative">
+        <input
+          type="text"
+          id="gateLoginCode"
+          placeholder="000000"
+          maxlength="6"
+          pattern="[0-9]{6}"
+          inputmode="numeric"
+          style="font-size:32px; letter-spacing:12px; text-align:center; font-family:monospace; width:100%; padding:20px 8px; border:2px solid var(--border); border-radius:12px; transition:border-color 0.2s"
+          autocomplete="one-time-code"
+        />
+        <button
+          id="btnClearCode"
+          type="button"
+          style="position:absolute; right:8px; top:50%; transform:translateY(-50%); background:none; border:none; color:var(--muted); cursor:pointer; font-size:20px; padding:8px; display:none"
+          title="Code löschen"
+        >×</button>
+      </div>
+      <div id="codeHint" class="muted" style="margin-top:8px; font-size:12px; text-align:center">
+        Code wird nach Eingabe automatisch geprüft...
+      </div>
+      <button class="btn primary" id="btnVerifyCode" style="width:100%; margin-top:16px; padding:14px; position:relative">
+        <span id="btnVerifyText">✓ Code bestätigen & Einloggen</span>
+        <span id="btnVerifySpinner" class="spinner" style="display:none; position:absolute; right:16px; top:50%; transform:translateY(-50%)"></span>
+      </button>
+      <div style="display:flex; gap:12px; margin-top:12px; justify-content:center">
+        <button class="linklike" id="btnBackToEmail" style="font-size:13px">
+          ← Andere Email
+        </button>
+        <span style="color:var(--muted)">|</span>
+        <button class="linklike" id="btnResendCode" style="font-size:13px">
+          🔄 Code erneut senden
+        </button>
+      </div>
+      <p class="muted" style="margin-top:16px; font-size:11px; text-align:center">
+        💡 Tipp: Du kannst auch direkt auf den Link in der Email klicken!
+      </p>
     </div>
 
-    <div id="gateForgotFields" class="hidden">
-      <input type="text" id="gateForgotEmail" placeholder="E-Mail" autocomplete="email" />
-      <button class="btn primary" id="btnGateForgotSend" style="width:100%" data-i18n="gate.forgot.btn">Reset-Link senden</button>
-    </div>
-
-    <div id="gateResetFields" class="hidden">
-      <input type="password" id="gateResetPassword" placeholder="Neues Passwort" autocomplete="new-password" />
-      <input type="password" id="gateResetPassword2" placeholder="Passwort wiederholen" autocomplete="new-password" />
-      <button class="btn primary" id="btnGateReset" style="width:100%" data-i18n="gate.reset.btn">Passwort setzen</button>
-    </div>
-
-    <div class="gate-toggle">
-      <button class="linklike" id="btnGateToggleMode" data-i18n="gate.register.link">Account anlegen</button>
+    <!-- Guest Mode -->
+    <div id="gateGuestSection">
+      <div class="hr" style="margin:20px 0"></div>
+      <button class="btn" id="btnGuestMode" style="width:100%">
+        👤 Als Gast fortfahren (ohne Account)
+      </button>
+      <div class="muted" style="margin-top:8px; font-size:11px; text-align:center">
+        Training & Swipe kostenlos testen.<br>Fortschritt wird nicht gespeichert.
+      </div>
     </div>
   </div>
 
@@ -140,6 +189,10 @@
     <h1 class="header-title">🏋️ Prüfungstrainer v42.0</h1>
     <div class="controls">
       <div class="control-group">
+        <button id="btnAccountTop" class="btn iconbtn" title="Account" data-i18n-aria="aria.accountOpen">👤 <span class="badge-dot" id="accountBadge" hidden></span></button>
+        <button id="btnTextSize" class="btn" title="Textgröße" data-i18n-title="aria.textSize" data-i18n-aria="aria.textSize">Aa <span id="textSizeLabel">M</span></button>
+        <button id="btnMenusToggle" class="btn" title="Menüs ein/aus" data-i18n-title="nav.toggle" data-i18n-aria="nav.toggle">☰</button>
+        <button id="btnTheme" class="btn" title="Hell/Dunkel umschalten" data-i18n-aria="theme.title">🌗</button>
         <div class="langmenu">
           <button class="btn langbtn" id="btnLangMenu" title="Sprache wechseln" data-i18n-title="aria.langMenu" data-i18n-aria="aria.langMenu">🌐 <span id="langLabel">DE</span></button>
           <div class="langdrop" id="langMenu">
@@ -148,16 +201,25 @@
             <button data-lang="ru">Русский</button>
           </div>
         </div>
-        <button id="btnTextSize" class="btn" title="Textgröße" data-i18n-title="aria.textSize" data-i18n-aria="aria.textSize">Aa <span id="textSizeLabel">M</span></button>
-        <button id="btnMenusToggle" class="btn" title="Menüs ein/aus" data-i18n-title="nav.toggle" data-i18n-aria="nav.toggle">☰</button>
-        <button id="btnTheme" class="btn" title="Hell/Dunkel umschalten" data-i18n-aria="theme.title">🌗</button>
-      </div>
-      <div class="control-group">
-        <button id="btnAccountTop" class="btn iconbtn" title="Account" data-i18n-aria="aria.accountOpen">👤 <span class="badge-dot" id="accountBadge" hidden></span></button>
       </div>
     </div>
   </div>
 </header>
+
+<!-- Guest Mode Banner -->
+<div id="guestBanner" class="guest-banner hidden" style="background:#fef3c7; border-bottom:2px solid #f59e0b; padding:12px 0; text-align:center">
+  <div class="wrap" style="display:flex; align-items:center; justify-content:center; gap:12px; flex-wrap:wrap">
+    <span style="font-size:20px">👤</span>
+    <span style="font-weight:600; color:#92400e">Gast-Modus aktiv</span>
+    <span style="color:#78350f; font-size:14px">
+      Fortschritt wird nicht gespeichert. Einige Features sind deaktiviert.
+    </span>
+    <button class="btn btn-sm" id="btnGuestBannerLogin" style="background:#f59e0b; color:white">
+      Jetzt einloggen
+    </button>
+  </div>
+</div>
+
 <main class="wrap">
   <div class="tabbar">
     <div class="tabicons">
@@ -167,6 +229,7 @@
       <button class="btn tabbtn" data-tab="leitner" title="Lernkasten">📚 <span class="label" data-i18n="nav.leitner">Lernkasten</span></button>
       <button class="btn tabbtn" data-tab="community" title="Community">🏆 <span class="label" data-i18n="nav.community">Community</span> <span class="badge-count" id="communityBadge" hidden>0</span></button>
       <button class="btn tabbtn admin-only" data-tab="pool" title="Pool-Editor">🗂️ <span class="label" data-i18n="nav.pool">Fragenpool‑Editor</span></button>
+      <button class="btn tabbtn admin-only" data-tab="settings" title="System-Einstellungen">⚙️ <span class="label" data-i18n="nav.settings">Einstellungen</span></button>
       <button class="btn tabbtn" data-tab="about" title="Impressum">ℹ️ <span class="label">Impressum</span></button>
       <button class="btn tabbtn" data-tab="hilfe" title="Hilfe">❓ <span class="label">Hilfe</span></button>
     </div>
@@ -385,6 +448,394 @@
     <div class="panel">
       <h3 class="title" data-i18n="account.statsTitle">Statistik</h3>
       <div id="userStats" class="grid two"></div>
+    </div>
+
+    <!-- ADMIN DASHBOARD (Admin-Only) -->
+    <div class="panel admin-only" style="display:none">
+      <h3 class="title">⚙️ Admin Dashboard</h3>
+
+      <!-- Admin Navigation -->
+      <div class="admin-nav" style="display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap">
+        <button class="btn btn-sm" data-admin-tab="stats">📊 Übersicht</button>
+        <button class="btn btn-sm" data-admin-tab="settings">⚙️ Einstellungen</button>
+        <button class="btn btn-sm" data-admin-tab="users">👥 User</button>
+        <button class="btn btn-sm" data-admin-tab="docs">📚 Dokumentation</button>
+        <button class="btn btn-sm" data-admin-tab="audit">📋 Audit Log</button>
+      </div>
+
+      <!-- Admin Stats Section -->
+      <div id="admin-stats" class="admin-section" style="display:none">
+        <h4 style="margin:0 0 16px 0">System-Statistiken</h4>
+        <div id="adminSystemStats" class="grid three" style="gap:16px"></div>
+      </div>
+
+      <!-- Admin Settings Section -->
+      <div id="admin-settings" class="admin-section" style="display:none">
+        <h4 style="margin:0 0 16px 0">System-Einstellungen</h4>
+
+        <!-- Guest Access Control -->
+        <div class="settings-group">
+          <h5 style="margin:0 0 8px 0">🔐 Zugriffskontrolle für Gäste</h5>
+          <p class="muted" style="margin:0 0 12px 0; font-size:13px">Bestimme, welche Features ohne Login nutzbar sind.</p>
+
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:12px">
+            <label style="display:flex; align-items:center; gap:8px; padding:8px; border:1px solid var(--border); border-radius:4px; cursor:pointer">
+              <input type="checkbox" id="setting_guest_training" />
+              <span style="flex:1">
+                <strong>Training-Modus</strong>
+                <div class="muted" style="font-size:12px">Standard Multiple-Choice Training</div>
+              </span>
+            </label>
+
+            <label style="display:flex; align-items:center; gap:8px; padding:8px; border:1px solid var(--border); border-radius:4px; cursor:pointer">
+              <input type="checkbox" id="setting_guest_swipe" />
+              <span style="flex:1">
+                <strong>Swipe-Modus</strong>
+                <div class="muted" style="font-size:12px">Tinder-Style Quiz</div>
+              </span>
+            </label>
+
+            <label style="display:flex; align-items:center; gap:8px; padding:8px; border:1px solid var(--border); border-radius:4px; cursor:pointer">
+              <input type="checkbox" id="setting_guest_exam" />
+              <span style="flex:1">
+                <strong>Prüfungsmodus</strong>
+                <div class="muted" style="font-size:12px">Zeitgesteuerte Prüfung</div>
+              </span>
+            </label>
+
+            <label style="display:flex; align-items:center; gap:8px; padding:8px; border:1px solid var(--border); border-radius:4px; cursor:pointer">
+              <input type="checkbox" id="setting_guest_leitner" />
+              <span style="flex:1">
+                <strong>Leitner</strong>
+                <div class="muted" style="font-size:12px">⚠️ Erfordert Datenspeicherung</div>
+              </span>
+            </label>
+
+            <label style="display:flex; align-items:center; gap:8px; padding:8px; border:1px solid var(--border); border-radius:4px; cursor:pointer">
+              <input type="checkbox" id="setting_guest_community" />
+              <span style="flex:1">
+                <strong>Community</strong>
+                <div class="muted" style="font-size:12px">Leaderboards, Duels, Freunde</div>
+              </span>
+            </label>
+
+            <label style="display:flex; align-items:center; gap:8px; padding:8px; border:1px solid var(--border); border-radius:4px; cursor:pointer">
+              <input type="checkbox" id="setting_guest_statistics" />
+              <span style="flex:1">
+                <strong>Statistiken</strong>
+                <div class="muted" style="font-size:12px">Persistente Statistiken</div>
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <!-- Languages -->
+        <div class="settings-group">
+          <h5 style="margin:0 0 8px 0">🌍 Verfügbare Sprachen</h5>
+          <p class="muted" style="margin:0 0 12px 0; font-size:13px">Lege fest, welche Sprachen im UI angezeigt werden.</p>
+
+          <div style="display:flex; flex-direction:column; gap:8px">
+            <label style="display:flex; align-items:center; gap:12px; padding:8px; border:1px solid var(--border); border-radius:4px">
+              <input type="checkbox" id="setting_lang_de" />
+              <span style="flex:1">🇩🇪 Deutsch</span>
+              <input type="radio" name="defaultLang" value="de" />
+              <span class="muted" style="font-size:13px">Standard</span>
+            </label>
+
+            <label style="display:flex; align-items:center; gap:12px; padding:8px; border:1px solid var(--border); border-radius:4px">
+              <input type="checkbox" id="setting_lang_en" />
+              <span style="flex:1">🇬🇧 English</span>
+              <input type="radio" name="defaultLang" value="en" />
+              <span class="muted" style="font-size:13px">Standard</span>
+            </label>
+
+            <label style="display:flex; align-items:center; gap:12px; padding:8px; border:1px solid var(--border); border-radius:4px">
+              <input type="checkbox" id="setting_lang_ru" />
+              <span style="flex:1">🇷🇺 Русский</span>
+              <input type="radio" name="defaultLang" value="ru" />
+              <span class="muted" style="font-size:13px">Standard</span>
+            </label>
+          </div>
+
+          <div class="muted" style="margin-top:8px; font-size:12px">
+            💡 <strong>Tipp:</strong> Deaktivierte Sprachen werden nicht im Language-Picker angezeigt.
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <!-- Branding -->
+        <div class="settings-group">
+          <h5 style="margin:0 0 8px 0">🎨 Branding</h5>
+
+          <label style="display:block; margin-bottom:12px">
+            App-Name:
+            <input type="text" id="setting_appName" style="width:100%; margin-top:4px" />
+            <div class="muted" style="font-size:12px; margin-top:2px">Wird im Header und Login angezeigt</div>
+          </label>
+
+          <label style="display:flex; align-items:center; gap:8px; margin-bottom:12px">
+            <input type="checkbox" id="setting_showGithubLink" />
+            <span>GitHub Link im Footer anzeigen</span>
+          </label>
+
+          <label style="display:block">
+            Custom Footer Text (optional):
+            <textarea id="setting_customFooter" rows="2" style="width:100%; margin-top:4px"></textarea>
+          </label>
+        </div>
+
+        <div class="hr"></div>
+
+        <!-- Features -->
+        <div class="settings-group">
+          <h5 style="margin:0 0 8px 0">✨ Feature Toggles</h5>
+
+          <div style="display:flex; flex-direction:column; gap:8px">
+            <label style="display:flex; align-items:center; gap:8px">
+              <input type="checkbox" id="setting_gamification" />
+              <span>Gamification (XP, Levels, Badges)</span>
+            </label>
+
+            <label style="display:flex; align-items:center; gap:8px">
+              <input type="checkbox" id="setting_leaderboards" />
+              <span>Leaderboards</span>
+            </label>
+
+            <label style="display:flex; align-items:center; gap:8px">
+              <input type="checkbox" id="setting_duels" />
+              <span>Duel-System</span>
+            </label>
+
+            <label style="display:flex; align-items:center; gap:8px">
+              <input type="checkbox" id="setting_contests" />
+              <span>Contests (noch nicht implementiert)</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <!-- Pool Editor Access -->
+        <div class="settings-group">
+          <h5 style="margin:0 0 8px 0">📦 Pool Editor Zugriff</h5>
+          <p class="muted" style="margin:0 0 12px 0; font-size:13px">Wer darf Pools erstellen und bearbeiten?</p>
+
+          <select id="setting_poolEditorAccess" style="width:100%; max-width:400px">
+            <option value="admin_only">Nur Admins</option>
+            <option value="logged_in">Alle eingeloggten User</option>
+            <option value="disabled">Niemand (Read-Only)</option>
+          </select>
+        </div>
+
+        <div style="margin-top:20px">
+          <button class="btn primary" id="btnSaveSettings">💾 Einstellungen speichern</button>
+          <span id="settingsSaveStatus" class="muted" style="margin-left:12px"></span>
+        </div>
+      </div>
+
+      <!-- Admin Users Section -->
+      <div id="admin-users" class="admin-section" style="display:none">
+        <h4 style="margin:0 0 16px 0">User-Verwaltung</h4>
+
+        <div style="display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; align-items:center">
+          <input type="text" id="adminUserSearch" placeholder="Suche (Email oder Username)..." style="flex:1; min-width:200px" />
+          <select id="adminUserRoleFilter" style="min-width:120px">
+            <option value="">Alle Rollen</option>
+            <option value="student">Student</option>
+            <option value="admin">Admin</option>
+          </select>
+          <button class="btn" id="btnAdminUserSearch">🔍 Suchen</button>
+        </div>
+
+        <div id="adminUserList" style="overflow-x:auto"></div>
+        <div id="adminUserPagination" style="margin-top:12px; display:flex; gap:8px; justify-content:center"></div>
+      </div>
+
+      <!-- Admin Docs Section -->
+      <div id="admin-docs" class="admin-section" style="display:none">
+        <h4 style="margin:0 0 16px 0">📚 Dokumentation</h4>
+
+        <div style="display:flex; gap:12px; margin-bottom:24px; flex-wrap:wrap">
+          <a href="#admin-docs-languages" class="btn btn-sm">🔤 Sprachen</a>
+          <a href="#admin-docs-pools" class="btn btn-sm">📝 Pools</a>
+          <a href="#admin-docs-extend" class="btn btn-sm">🔧 Erweitern</a>
+          <a href="#admin-docs-api" class="btn btn-sm">📖 API</a>
+        </div>
+
+        <!-- Language Docs -->
+        <div id="admin-docs-languages" class="doc-section">
+          <h5>🔤 Sprach-Konventionen</h5>
+
+          <h6 style="margin:16px 0 8px 0">Neue Sprache hinzufügen</h6>
+          <ol style="margin:8px 0 8px 20px; line-height:1.7">
+            <li><strong>Frontend i18n erweitern</strong> (site/index.html, ~Zeile 1500): Füge ein neues Sprach-Objekt zum <code>I18N</code> Objekt hinzu mit allen Keys</li>
+            <li><strong>Language Picker erweitern</strong>: Füge ein Button-Element mit <code>data-lang="xx"</code> hinzu</li>
+            <li><strong>Admin Dashboard aktivieren</strong>: Aktiviere die Sprache in den Einstellungen</li>
+          </ol>
+
+          <div style="background:#f5f5f5; padding:12px; border-radius:4px; margin:12px 0; font-size:13px">
+            💡 <strong>Tipp:</strong> Nutze KI-Tools zum Übersetzen aller ~200 i18n Keys. Achte auf konsistente Terminologie.
+          </div>
+
+          <h6 style="margin:16px 0 8px 0">Pool-Sprachen</h6>
+          <ul style="margin:8px 0 8px 20px">
+            <li><code>lang</code>-Feld: "de", "en", "ru" (ISO 639-1)</li>
+            <li><code>source_id</code>: Verknüpft Fragen über Sprachen</li>
+            <li>Multilingual Pools: Ein Pool, mehrere Sprachen</li>
+          </ul>
+
+          <p class="muted" style="margin-top:12px">
+            📖 Ausführlich: <a href="https://github.com/andremadstop/quizdojo/blob/main/docs/DATASET_FORMAT.md" target="_blank">docs/DATASET_FORMAT.md</a>
+          </p>
+        </div>
+
+        <div class="hr"></div>
+
+        <!-- Pool Docs -->
+        <div id="admin-docs-pools" class="doc-section">
+          <h5>📝 Fragenpools erstellen</h5>
+
+          <h6 style="margin:16px 0 8px 0">JSON-Format</h6>
+          <pre style="background:#1e293b; color:#e2e8f0; padding:12px; border-radius:4px; overflow-x:auto; font-size:12px; line-height:1.5">{
+  "meta": {
+    "name": "Pool Name",
+    "model": "claude-opus-4",
+    "license": "CC0"
+  },
+  "questions": [
+    {
+      "id": "q1",
+      "text": "Frage?",
+      "lang": "de",
+      "source_id": "q1",
+      "explanation": "Erklärung...",
+      "answers": [
+        {"id": "a1", "text": "Antwort", "correct": true}
+      ]
+    }
+  ]
+}</pre>
+
+          <h6 style="margin:16px 0 8px 0">Mit KI generieren</h6>
+          <p style="margin:8px 0">
+            📖 <a href="https://github.com/andremadstop/quizdojo/blob/main/docs/POOL_CREATOR_PROMPT.md" target="_blank">docs/POOL_CREATOR_PROMPT.md</a> - Universal Prompt für Claude/GPT
+          </p>
+
+          <h6 style="margin:16px 0 8px 0">Import via UI</h6>
+          <ol style="margin:8px 0 8px 20px; line-height:1.7">
+            <li>Pool-Tab öffnen</li>
+            <li>"Import" Button klicken</li>
+            <li>JSON-Datei auswählen</li>
+            <li>Automatische Validierung & Import</li>
+          </ol>
+        </div>
+
+        <div class="hr"></div>
+
+        <!-- Extend Docs -->
+        <div id="admin-docs-extend" class="doc-section">
+          <h5>🔧 System erweitern</h5>
+
+          <h6 style="margin:16px 0 8px 0">Neuen Lernmodus hinzufügen</h6>
+          <ol style="margin:8px 0 8px 20px; line-height:1.7">
+            <li>HTML Tab erstellen: <code>&lt;section id="tab-mynewmode"&gt;</code></li>
+            <li>Tab-Button hinzufügen mit <code>data-tab="mynewmode"</code></li>
+            <li>JavaScript-Logik für Modus implementieren</li>
+            <li>Optional: Backend API für Persistenz</li>
+          </ol>
+
+          <h6 style="margin:16px 0 8px 0">Custom CSS Themes</h6>
+          <p style="margin:8px 0">
+            CSS-Variablen in <code>site/css/variables.css</code> anpassen:
+          </p>
+          <pre style="background:#1e293b; color:#e2e8f0; padding:12px; border-radius:4px; overflow-x:auto; font-size:12px">:root {
+  --primary: #667eea;
+  --bg: #f5f5f5;
+  --text: #1f2937;
+}</pre>
+
+          <p class="muted" style="margin-top:12px">
+            📖 Architektur: <a href="https://github.com/andremadstop/quizdojo/blob/main/docs/ARCHITECTURE.md" target="_blank">docs/ARCHITECTURE.md</a>
+          </p>
+        </div>
+
+        <div class="hr"></div>
+
+        <!-- API Docs -->
+        <div id="admin-docs-api" class="doc-section">
+          <h5>📖 API-Referenz</h5>
+
+          <p style="margin:8px 0">
+            📖 Vollständige Dokumentation: <a href="https://github.com/andremadstop/quizdojo/blob/main/docs/API_DOCUMENTATION.md" target="_blank">docs/API_DOCUMENTATION.md</a>
+          </p>
+
+          <h6 style="margin:16px 0 8px 0">Wichtige Endpunkte</h6>
+          <table style="width:100%; border-collapse:collapse; margin:12px 0; font-size:13px">
+            <thead>
+              <tr style="background:var(--header-bg); text-align:left">
+                <th style="padding:8px; border-bottom:2px solid var(--border)">Endpunkt</th>
+                <th style="padding:8px; border-bottom:2px solid var(--border)">Methode</th>
+                <th style="padding:8px; border-bottom:2px solid var(--border)">Auth</th>
+                <th style="padding:8px; border-bottom:2px solid var(--border)">Beschreibung</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="padding:8px; border-bottom:1px solid var(--border)"><code>/auth/request-magic-link</code></td>
+                <td style="padding:8px; border-bottom:1px solid var(--border)">POST</td>
+                <td style="padding:8px; border-bottom:1px solid var(--border)">❌</td>
+                <td style="padding:8px; border-bottom:1px solid var(--border)">Magic Link anfordern</td>
+              </tr>
+              <tr>
+                <td style="padding:8px; border-bottom:1px solid var(--border)"><code>/pools</code></td>
+                <td style="padding:8px; border-bottom:1px solid var(--border)">GET</td>
+                <td style="padding:8px; border-bottom:1px solid var(--border)">Optional</td>
+                <td style="padding:8px; border-bottom:1px solid var(--border)">Alle Pools</td>
+              </tr>
+              <tr>
+                <td style="padding:8px; border-bottom:1px solid var(--border)"><code>/questions</code></td>
+                <td style="padding:8px; border-bottom:1px solid var(--border)">GET</td>
+                <td style="padding:8px; border-bottom:1px solid var(--border)">Optional</td>
+                <td style="padding:8px; border-bottom:1px solid var(--border)">Fragen für Pool</td>
+              </tr>
+              <tr>
+                <td style="padding:8px; border-bottom:1px solid var(--border)"><code>/admin/settings</code></td>
+                <td style="padding:8px; border-bottom:1px solid var(--border)">GET/PUT</td>
+                <td style="padding:8px; border-bottom:1px solid var(--border)">✅ Admin</td>
+                <td style="padding:8px; border-bottom:1px solid var(--border)">System-Einstellungen</td>
+              </tr>
+              <tr>
+                <td style="padding:8px"><code>/settings/public</code></td>
+                <td style="padding:8px">GET</td>
+                <td style="padding:8px">❌</td>
+                <td style="padding:8px">Öffentliche Settings</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Admin Audit Log Section -->
+      <div id="admin-audit" class="admin-section" style="display:none">
+        <h4 style="margin:0 0 16px 0">Audit Log</h4>
+
+        <div style="display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; align-items:center">
+          <select id="adminAuditActionFilter" style="min-width:200px">
+            <option value="">Alle Aktionen</option>
+            <option value="auth_magic_link_login">Magic Link Login</option>
+            <option value="admin_settings_updated">Settings aktualisiert</option>
+            <option value="admin_user_updated">User aktualisiert</option>
+            <option value="admin_user_deleted">User gelöscht</option>
+          </select>
+          <input type="number" id="adminAuditLimit" value="50" min="10" max="500" step="10" style="width:100px" />
+          <button class="btn" id="btnAdminAuditRefresh">🔄 Aktualisieren</button>
+        </div>
+
+        <div id="adminAuditList" style="overflow-x:auto"></div>
+      </div>
     </div>
   </section>
   <!-- COMMUNITY -->
@@ -631,6 +1082,142 @@
       </div>
       <div class="row" style="align-items:center; gap:10px; flex-wrap:wrap"></div>
     </div>
+    <!-- Progress Mountain Visualization -->
+    <div id="leitnerMastery" class="panel hidden">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px">
+        <h3 style="margin:0; display:flex; align-items:center; gap:8px">
+          🏔️ <span data-i18n="leitner.roadToMastery">Deine Lernreise</span>
+        </h3>
+        <button class="btn subtle" id="btnToggleMasteryDetails" style="font-size:20px" title="Details anzeigen">📊</button>
+      </div>
+
+      <!-- Compact Progress Bar -->
+      <div style="margin-bottom:20px">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px">
+          <span style="font-size:14px; color:var(--muted)" data-i18n="leitner.masteryGoal">Ziel: Alle Fragen gemeistert</span>
+          <span id="masteryPercentage" style="font-size:20px; font-weight:700; color:#fbbf24">0%</span>
+        </div>
+        <div style="background:rgba(255,255,255,0.1); height:32px; border-radius:16px; overflow:hidden; position:relative">
+          <div id="masteryProgressBar" style="background:linear-gradient(90deg, #3b82f6 0%, #8b5cf6 50%, #fbbf24 100%); height:100%; width:0%; transition:width 0.5s ease-out; border-radius:16px"></div>
+          <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:600; color:white; text-shadow:0 1px 2px rgba(0,0,0,0.5)">
+            <span id="masteryFraction">0 / 0</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Progress Mountain (Stacked Bars) -->
+      <div id="masteryMountain" style="display:flex; flex-direction:column; gap:6px; margin-bottom:16px">
+        <div class="mastery-box-row" data-box="5" style="display:flex; align-items:center; gap:12px">
+          <div style="min-width:100px; text-align:right; font-size:14px; display:flex; align-items:center; justify-content:flex-end; gap:6px">
+            <span style="font-size:18px">⭐</span>
+            <span data-i18n="leitner.box5Label">Gemeistert</span>
+          </div>
+          <div style="flex:1; background:rgba(255,255,255,0.05); height:32px; border-radius:8px; overflow:hidden; position:relative">
+            <div class="mastery-bar" data-box="5" style="background:#fbbf24; height:100%; width:0%; transition:width 0.4s ease-out"></div>
+            <div style="position:absolute; inset:0; display:flex; align-items:center; padding:0 12px; font-size:13px; font-weight:600; color:white">
+              <span class="mastery-count" data-box="5">0</span>
+            </div>
+          </div>
+        </div>
+        <div class="mastery-box-row" data-box="4" style="display:flex; align-items:center; gap:12px">
+          <div style="min-width:100px; text-align:right; font-size:14px; display:flex; align-items:center; justify-content:flex-end; gap:6px">
+            <span style="font-size:18px">🔥</span>
+            <span data-i18n="leitner.box4Label">Fast da</span>
+          </div>
+          <div style="flex:1; background:rgba(255,255,255,0.05); height:32px; border-radius:8px; overflow:hidden; position:relative">
+            <div class="mastery-bar" data-box="4" style="background:#f97316; height:100%; width:0%; transition:width 0.4s ease-out 0.1s"></div>
+            <div style="position:absolute; inset:0; display:flex; align-items:center; padding:0 12px; font-size:13px; font-weight:600; color:white">
+              <span class="mastery-count" data-box="4">0</span>
+            </div>
+          </div>
+        </div>
+        <div class="mastery-box-row" data-box="3" style="display:flex; align-items:center; gap:12px">
+          <div style="min-width:100px; text-align:right; font-size:14px; display:flex; align-items:center; justify-content:flex-end; gap:6px">
+            <span style="font-size:18px">💪</span>
+            <span data-i18n="leitner.box3Label">Gut drauf</span>
+          </div>
+          <div style="flex:1; background:rgba(255,255,255,0.05); height:32px; border-radius:8px; overflow:hidden; position:relative">
+            <div class="mastery-bar" data-box="3" style="background:#8b5cf6; height:100%; width:0%; transition:width 0.4s ease-out 0.2s"></div>
+            <div style="position:absolute; inset:0; display:flex; align-items:center; padding:0 12px; font-size:13px; font-weight:600; color:white">
+              <span class="mastery-count" data-box="3">0</span>
+            </div>
+          </div>
+        </div>
+        <div class="mastery-box-row" data-box="2" style="display:flex; align-items:center; gap:12px">
+          <div style="min-width:100px; text-align:right; font-size:14px; display:flex; align-items:center; justify-content:flex-end; gap:6px">
+            <span style="font-size:18px">📖</span>
+            <span data-i18n="leitner.box2Label">Lernend</span>
+          </div>
+          <div style="flex:1; background:rgba(255,255,255,0.05); height:32px; border-radius:8px; overflow:hidden; position:relative">
+            <div class="mastery-bar" data-box="2" style="background:#3b82f6; height:100%; width:0%; transition:width 0.4s ease-out 0.3s"></div>
+            <div style="position:absolute; inset:0; display:flex; align-items:center; padding:0 12px; font-size:13px; font-weight:600; color:white">
+              <span class="mastery-count" data-box="2">0</span>
+            </div>
+          </div>
+        </div>
+        <div class="mastery-box-row" data-box="1" style="display:flex; align-items:center; gap:12px">
+          <div style="min-width:100px; text-align:right; font-size:14px; display:flex; align-items:center; justify-content:flex-end; gap:6px">
+            <span style="font-size:18px">🌱</span>
+            <span data-i18n="leitner.box1Label">Anfänger</span>
+          </div>
+          <div style="flex:1; background:rgba(255,255,255,0.05); height:32px; border-radius:8px; overflow:hidden; position:relative">
+            <div class="mastery-bar" data-box="1" style="background:#10b981; height:100%; width:0%; transition:width 0.4s ease-out 0.4s"></div>
+            <div style="position:absolute; inset:0; display:flex; align-items:center; padding:0 12px; font-size:13px; font-weight:600; color:white">
+              <span class="mastery-count" data-box="1">0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Milestone & Stats Summary -->
+      <div style="display:flex; gap:16px; flex-wrap:wrap; padding:16px; background:rgba(255,255,255,0.03); border-radius:12px">
+        <div style="flex:1; min-width:150px">
+          <div style="font-size:12px; color:var(--muted); margin-bottom:4px" data-i18n="leitner.nextMilestone">Nächster Meilenstein</div>
+          <div id="nextMilestone" style="font-size:16px; font-weight:600; color:#fbbf24">25%</div>
+          <div id="milestoneRemaining" style="font-size:12px; color:var(--muted); margin-top:2px">Noch 0 Fragen</div>
+        </div>
+        <div style="flex:1; min-width:150px">
+          <div style="font-size:12px; color:var(--muted); margin-bottom:4px" data-i18n="leitner.currentStreak">Aktueller Streak</div>
+          <div style="font-size:16px; font-weight:600; color:#f97316">
+            🔥 <span id="currentStreak">0</span> Tage
+          </div>
+        </div>
+        <div style="flex:1; min-width:150px">
+          <div style="font-size:12px; color:var(--muted); margin-bottom:4px" data-i18n="leitner.sessionCount">Sessions</div>
+          <div id="sessionCount" style="font-size:16px; font-weight:600; color:#8b5cf6">0</div>
+        </div>
+      </div>
+
+      <!-- Detailed Stats (expandable) -->
+      <div id="masteryDetailsPanel" class="hidden" style="margin-top:16px; padding:16px; background:rgba(255,255,255,0.03); border-radius:12px">
+        <h4 style="margin:0 0 12px 0; font-size:14px; color:var(--text)" data-i18n="leitner.detailedStats">📊 Detaillierte Statistiken</h4>
+        <div class="grid two" style="gap:12px; font-size:13px">
+          <div>
+            <span class="muted" data-i18n="leitner.totalCorrect">Richtig gesamt:</span>
+            <strong id="totalCorrect" style="margin-left:8px">0</strong>
+          </div>
+          <div>
+            <span class="muted" data-i18n="leitner.totalWrong">Falsch gesamt:</span>
+            <strong id="totalWrong" style="margin-left:8px">0</strong>
+          </div>
+          <div>
+            <span class="muted" data-i18n="leitner.successRate">Erfolgsrate:</span>
+            <strong id="successRate" style="margin-left:8px">0%</strong>
+          </div>
+          <div>
+            <span class="muted" data-i18n="leitner.longestStreak">Längster Streak:</span>
+            <strong id="longestStreak" style="margin-left:8px">0 Tage</strong>
+          </div>
+        </div>
+        <div style="margin-top:12px; padding:12px; background:rgba(255,255,255,0.02); border-radius:8px; border:1px solid var(--border)">
+          <div style="font-size:12px; color:var(--muted); margin-bottom:4px" data-i18n="leitner.milestonesReached">🏆 Erreichte Meilensteine</div>
+          <div id="milestonesReached" style="display:flex; gap:8px; flex-wrap:wrap; margin-top:6px">
+            <span class="muted" data-i18n="leitner.noMilestones">Noch keine erreicht</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div id="leitnerStats" class="panel"></div>
     <div class="panel" id="leitnerSetCardsPanel">
       <h3 class="title" data-i18n="leitner.setsTitle">Lernkasten‑Sets</h3>
@@ -771,6 +1358,203 @@ Nächste Frage
       <div id="listWrap" class="mono"></div>
     </div>
   </section>
+  <!-- SETTINGS -->
+  <section id="tab-settings" class="admin-only">
+    <div class="panel">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px">
+        <h3 class="title">⚙️ System-Einstellungen</h3>
+        <div class="row" style="gap:8px">
+          <button class="btn" id="btnSettingsSave">💾 Speichern</button>
+          <button class="btn warn" id="btnSettingsReset">🔄 Zurücksetzen</button>
+        </div>
+      </div>
+      <div class="muted" style="margin-bottom:20px">
+        Konfiguriere alle Funktionen der Anwendung. <b>Failsafe:</b> Mindestens 1 Sprache und 1 Modul müssen aktiv bleiben.
+      </div>
+    </div>
+
+    <!-- Authentication -->
+    <div class="panel">
+      <h4 style="margin:0 0 12px 0">🔐 Authentifizierung</h4>
+      <div class="grid two">
+        <label style="display:flex; align-items:center; gap:8px; cursor:pointer">
+          <input type="checkbox" id="setting-auth-requireLogin" />
+          <div>
+            <div><b>Login erforderlich</b></div>
+            <div class="muted" style="font-size:13px">Nutzer müssen sich anmelden, um die App zu nutzen</div>
+          </div>
+        </label>
+        <label style="display:flex; align-items:center; gap:8px; cursor:pointer">
+          <input type="checkbox" id="setting-auth-allowGuestMode" />
+          <div>
+            <div><b>Gastmodus erlauben</b></div>
+            <div class="muted" style="font-size:13px">Erlaubt anonyme Nutzung ohne Account</div>
+          </div>
+        </label>
+      </div>
+      <div style="margin-top:12px">
+        <label><b>Admin-Login-URL</b></label>
+        <input type="text" id="setting-auth-adminLoginUrl" placeholder="/admin.html" style="max-width:300px" />
+      </div>
+    </div>
+
+    <!-- Modules -->
+    <div class="panel">
+      <h4 style="margin:0 0 12px 0">📦 Module</h4>
+      <div class="muted" style="margin-bottom:12px">Mindestens 1 Modul muss aktiv sein.</div>
+      <div class="grid two">
+        <label style="display:flex; align-items:center; gap:8px; cursor:pointer">
+          <input type="checkbox" id="setting-modules-training" />
+          <div><b>🎯 Training</b> – Klassisches Frage/Antwort-Training</div>
+        </label>
+        <label style="display:flex; align-items:center; gap:8px; cursor:pointer">
+          <input type="checkbox" id="setting-modules-swipe" />
+          <div><b>👆 Swipe</b> – Tinder-Style Quiz (Richtig/Falsch)</div>
+        </label>
+        <label style="display:flex; align-items:center; gap:8px; cursor:pointer">
+          <input type="checkbox" id="setting-modules-exam" />
+          <div><b>📝 Prüfung</b> – Prüfungssimulation mit Timer</div>
+        </label>
+        <label style="display:flex; align-items:center; gap:8px; cursor:pointer">
+          <input type="checkbox" id="setting-modules-leitner" />
+          <div><b>📚 Leitner</b> – Spaced Repetition System</div>
+        </label>
+        <label style="display:flex; align-items:center; gap:8px; cursor:pointer">
+          <input type="checkbox" id="setting-modules-community" />
+          <div><b>🏆 Community</b> – Ranglisten, Duels, Statistiken</div>
+        </label>
+      </div>
+    </div>
+
+    <!-- Features -->
+    <div class="panel">
+      <h4 style="margin:0 0 12px 0">✨ Features</h4>
+      <div class="grid two">
+        <label style="display:flex; align-items:center; gap:8px; cursor:pointer">
+          <input type="checkbox" id="setting-features-gamification" />
+          <div><b>Gamification</b> – XP, Level, Streaks</div>
+        </label>
+        <label style="display:flex; align-items:center; gap:8px; cursor:pointer">
+          <input type="checkbox" id="setting-features-leaderboards" />
+          <div><b>Ranglisten</b> – Öffentliche Leaderboards</div>
+        </label>
+        <label style="display:flex; align-items:center; gap:8px; cursor:pointer">
+          <input type="checkbox" id="setting-features-duels" />
+          <div><b>Duels</b> – 1v1 Herausforderungen</div>
+        </label>
+        <label style="display:flex; align-items:center; gap:8px; cursor:pointer">
+          <input type="checkbox" id="setting-features-contests" />
+          <div><b>Contests</b> – Wettbewerbe (experimentell)</div>
+        </label>
+        <label style="display:flex; align-items:center; gap:8px; cursor:pointer">
+          <input type="checkbox" id="setting-features-fontSizeToggle" />
+          <div><b>Schriftgröße-Button</b> – Aa Button im Header (S/M/L)</div>
+        </label>
+      </div>
+    </div>
+
+    <!-- Languages -->
+    <div class="panel">
+      <h4 style="margin:0 0 12px 0">🌍 Sprachen</h4>
+      <div class="muted" style="margin-bottom:12px">Mindestens 1 Sprache muss aktiv sein. Genau 1 Sprache ist Standard.</div>
+      <div class="grid" style="grid-template-columns:repeat(3, 1fr); gap:12px">
+        <div class="panel" style="margin:0; padding:12px">
+          <label style="display:flex; align-items:center; gap:8px; cursor:pointer; margin-bottom:8px">
+            <input type="checkbox" id="setting-lang-de-enabled" />
+            <b>🇩🇪 Deutsch</b>
+          </label>
+          <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:13px">
+            <input type="radio" name="defaultLang" id="setting-lang-de-default" value="de" />
+            <span>Standard-Sprache</span>
+          </label>
+        </div>
+        <div class="panel" style="margin:0; padding:12px">
+          <label style="display:flex; align-items:center; gap:8px; cursor:pointer; margin-bottom:8px">
+            <input type="checkbox" id="setting-lang-en-enabled" />
+            <b>🇬🇧 English</b>
+          </label>
+          <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:13px">
+            <input type="radio" name="defaultLang" id="setting-lang-en-default" value="en" />
+            <span>Default language</span>
+          </label>
+        </div>
+        <div class="panel" style="margin:0; padding:12px">
+          <label style="display:flex; align-items:center; gap:8px; cursor:pointer; margin-bottom:8px">
+            <input type="checkbox" id="setting-lang-ru-enabled" />
+            <b>🇷🇺 Русский</b>
+          </label>
+          <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:13px">
+            <input type="radio" name="defaultLang" id="setting-lang-ru-default" value="ru" />
+            <span>Язык по умолчанию</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Branding -->
+    <div class="panel">
+      <h4 style="margin:0 0 12px 0">🎨 Branding</h4>
+      <div class="grid two">
+        <div>
+          <label><b>App-Name</b></label>
+          <input type="text" id="setting-branding-appName" placeholder="QuizDojo" />
+        </div>
+        <div>
+          <label><b>Footer-Text (optional)</b></label>
+          <input type="text" id="setting-branding-customFooterText" placeholder="Custom footer text..." />
+        </div>
+      </div>
+      <label style="display:flex; align-items:center; gap:8px; cursor:pointer; margin-top:12px">
+        <input type="checkbox" id="setting-branding-showGithubLink" />
+        <b>GitHub-Link anzeigen</b>
+      </label>
+    </div>
+
+    <!-- Pools -->
+    <div class="panel">
+      <h4 style="margin:0 0 12px 0">🗂️ Pools</h4>
+      <div class="grid two">
+        <label style="display:flex; align-items:center; gap:8px; cursor:pointer">
+          <input type="checkbox" id="setting-pools-autoCreateDefault" />
+          <div><b>Standard-Pool automatisch erstellen</b></div>
+        </label>
+        <label style="display:flex; align-items:center; gap:8px; cursor:pointer">
+          <input type="checkbox" id="setting-pools-allowUserPools" />
+          <div><b>Nutzer dürfen eigene Pools anlegen</b></div>
+        </label>
+        <label style="display:flex; align-items:center; gap:8px; cursor:pointer">
+          <input type="checkbox" id="setting-pools-requireApproval" />
+          <div><b>Neue Pools benötigen Admin-Freigabe</b></div>
+        </label>
+      </div>
+    </div>
+
+    <!-- Access Control -->
+    <div class="panel">
+      <h4 style="margin:0 0 12px 0">🔒 Zugriffsrechte</h4>
+      <div class="grid two">
+        <div>
+          <label><b>Pool-Bearbeitung</b></label>
+          <select id="setting-access-poolEditing">
+            <option value="owner">Nur Owner</option>
+            <option value="logged_in">Alle eingeloggten Nutzer</option>
+            <option value="all">Alle (inkl. Gäste)</option>
+          </select>
+        </div>
+        <div>
+          <label><b>Pool-Erstellung</b></label>
+          <select id="setting-access-poolCreation">
+            <option value="admin">Nur Admins</option>
+            <option value="logged_in">Alle eingeloggten Nutzer</option>
+            <option value="all">Alle (inkl. Gäste)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Status Messages -->
+    <div id="settingsMessage" class="panel hidden" style="margin-top:16px"></div>
+  </section>
   <!-- DATA -->
   <section id="tab-data">
     <div class="panel">
@@ -820,7 +1604,7 @@ Nächste Frage
         <h4 style="margin:0 0 8px 0" data-i18n="impressum.subtitle">Angaben gemäß § 5 TMG</h4>
         <div class="muted" data-i18n="impressum.body">
           [Your Name]<br>
-          [Your Address]<br>
+          Geschwister‑Scholl Str. 32<br>
           [Your City, Postal Code]<br>
           E‑Mail: <a href="mailto:contact@example.com">contact@example.com</a>
         </div>
@@ -1170,6 +1954,7 @@ const I18N = {
     'speedrun.aborted': 'Speedrun abgebrochen',
     'nav.community': 'Community',
     'nav.pool': 'Fragenpool‑Editor',
+    'nav.settings': 'Einstellungen',
     'nav.data': 'Import/Export',
     'nav.about': 'Impressum',
     'nav.help': 'Hilfe',
@@ -1333,6 +2118,23 @@ const I18N = {
     'leitner.modeClassic': 'Klassisch (mit Fälligkeit)',
     'leitner.modeSimpleShort': 'Einfach',
     'leitner.modeClassicShort': 'Klassisch',
+    'leitner.roadToMastery': 'Deine Lernreise',
+    'leitner.masteryGoal': 'Ziel: Alle Fragen gemeistert',
+    'leitner.box1Label': 'Anfänger',
+    'leitner.box2Label': 'Lernend',
+    'leitner.box3Label': 'Gut drauf',
+    'leitner.box4Label': 'Fast da',
+    'leitner.box5Label': 'Gemeistert',
+    'leitner.nextMilestone': 'Nächster Meilenstein',
+    'leitner.currentStreak': 'Aktueller Streak',
+    'leitner.sessionCount': 'Sessions',
+    'leitner.detailedStats': 'Detaillierte Statistiken',
+    'leitner.totalCorrect': 'Richtig gesamt',
+    'leitner.totalWrong': 'Falsch gesamt',
+    'leitner.successRate': 'Erfolgsrate',
+    'leitner.longestStreak': 'Längster Streak',
+    'leitner.milestonesReached': 'Erreichte Meilensteine',
+    'leitner.noMilestones': 'Noch keine erreicht',
     'leitner.multiHint': 'Hinweis: Mehrfachauswahl möglich.',
     'leitner.next': 'Weiter',
     'leitner.needAnswer': 'Bitte zuerst eine Antwort auswählen.',
@@ -1402,9 +2204,9 @@ const I18N = {
     'data.dataset.append': 'Zum aktiven Pool hinzufügen',
     'data.defaultImport': 'Initiale Datensätze werden geladen…',
     'gate.title': 'Profil auswählen',
-    'gate.subtitle': 'Bereit, dein Wissen zu testen? Sammle XP, fordere Freunde heraus und werde Experte.',
+    'gate.subtitle': 'Lerne smarter mit 6 verschiedenen Modi',
     'gate.title': 'Willkommen',
-    'gate.subtitle': 'Bereit, dein Wissen zu testen? Sammle XP, fordere Freunde heraus und werde Experte.',
+    'gate.subtitle': 'Lerne smarter mit 6 verschiedenen Modi',
     'gate.disclaimer': 'Privates Projekt zu Schulungszwecken. Kein Anspruch auf fehlerfreien Betrieb.',
     'gate.account.title': 'Account',
     'gate.account.subtitle': 'Login oder neuen Account anlegen.',
@@ -1523,7 +2325,7 @@ const I18N = {
     'footer.credits': 'Prüfungstrainer v42.0 • GPL‑3.0 • API‑basiert • Made with ❤️ • Credits: Andre Stiebitz',
     'impressum.title': 'Impressum',
     'impressum.subtitle': 'Angaben gemäß § 5 TMG',
-    'impressum.body': '[Your Name]<br>[Your Address]<br>[Your City, Postal Code]<br>E‑Mail: <a href="mailto:contact@example.com">contact@example.com</a>',
+    'impressum.body': '[Your Name]<br>Geschwister‑Scholl Str. 32<br>[Your City, Postal Code]<br>E‑Mail: <a href="mailto:contact@example.com">contact@example.com</a>',
     'impressum.privacyTitle': 'Datenschutzhinweis (DSGVO)',
     'impressum.privacy.li1': 'Personenbezogene Daten: Benutzername, E‑Mail‑Adresse (bei Registrierung) und Lernfortschritt werden serverseitig gespeichert.',
     'impressum.privacy.li2': 'Zweck: Bereitstellung der Lernplattform, Speicherung des Lernfortschritts, Account‑Verwaltung.',
@@ -1601,8 +2403,8 @@ const I18N = {
     'help.admin.title': 'Editor‑Rechte',
     'help.admin.li1': 'Zum Bearbeiten, Importieren oder Löschen musst du eingeloggt sein.',
     'impressum.subtitle': 'Angaben gemäß § 5 TMG',
-    'impressum.body': '[Your Name]<br>[Your Address]<br>[Your City, Postal Code]<br>E‑Mail: <a href=\"mailto:contact@example.com\">contact@example.com</a>',
-    'impressum.short': '[Your Name] · [Your Address] · [Your City, Postal Code] · <a href=\"mailto:contact@example.com\">contact@example.com</a>',
+    'impressum.body': '[Your Name]<br>Geschwister‑Scholl Str. 32<br>[Your City, Postal Code]<br>E‑Mail: <a href=\"mailto:contact@example.com\">contact@example.com</a>',
+    'impressum.short': '[Your Name] · Geschwister‑Scholl Str. 32 · [Your City, Postal Code] · <a href=\"mailto:contact@example.com\">contact@example.com</a>',
     'api.title': 'API‑Verbindung',
     'api.label': 'API‑URL',
     'api.save': 'Speichern',
@@ -1637,6 +2439,7 @@ const I18N = {
     'speedrun.aborted': 'Speedrun aborted',
     'nav.community': 'Community',
     'nav.pool': 'Question Pool Editor',
+    'nav.settings': 'Settings',
     'nav.data': 'Import/Export',
     'nav.about': 'Imprint',
     'nav.help': 'Help',
@@ -1800,6 +2603,23 @@ const I18N = {
     'leitner.modeClassic': 'Classic (with due)',
     'leitner.modeSimpleShort': 'Simple',
     'leitner.modeClassicShort': 'Classic',
+    'leitner.roadToMastery': 'Your Learning Journey',
+    'leitner.masteryGoal': 'Goal: Master all questions',
+    'leitner.box1Label': 'Beginner',
+    'leitner.box2Label': 'Learning',
+    'leitner.box3Label': 'Doing well',
+    'leitner.box4Label': 'Almost there',
+    'leitner.box5Label': 'Mastered',
+    'leitner.nextMilestone': 'Next milestone',
+    'leitner.currentStreak': 'Current streak',
+    'leitner.sessionCount': 'Sessions',
+    'leitner.detailedStats': 'Detailed statistics',
+    'leitner.totalCorrect': 'Total correct',
+    'leitner.totalWrong': 'Total wrong',
+    'leitner.successRate': 'Success rate',
+    'leitner.longestStreak': 'Longest streak',
+    'leitner.milestonesReached': 'Milestones reached',
+    'leitner.noMilestones': 'None reached yet',
     'leitner.multiHint': 'Note: Multiple answers may be correct.',
     'leitner.next': 'Next',
     'leitner.needAnswer': 'Please select an answer first.',
@@ -1869,9 +2689,9 @@ const I18N = {
     'data.dataset.append': 'Append to active pool',
     'data.defaultImport': 'Loading initial datasets…',
     'gate.title': 'Choose Profile',
-    'gate.subtitle': 'Ready to test your knowledge? Earn XP, challenge friends, and become an expert.',
+    'gate.subtitle': 'Learn smarter with 6 different modes',
     'gate.title': 'Welcome',
-    'gate.subtitle': 'Ready to test your knowledge? Earn XP, challenge friends, and become an expert.',
+    'gate.subtitle': 'Learn smarter with 6 different modes',
     'gate.disclaimer': 'Private project for training purposes. No guarantee of error-free operation.',
     'gate.account.title': 'Account',
     'gate.account.subtitle': 'Login or create a new account.',
@@ -1990,7 +2810,7 @@ const I18N = {
     'footer.credits': 'Prüfungstrainer v42.0 • GPL‑3.0 • API‑based • Made with ❤️ • Credits: Andre Stiebitz',
     'impressum.title': 'Imprint',
     'impressum.subtitle': 'Information in accordance with § 5 TMG',
-    'impressum.body': '[Your Name]<br>[Your Address]<br>[Your City, Postal Code]<br>Email: <a href="mailto:contact@example.com">contact@example.com</a>',
+    'impressum.body': '[Your Name]<br>Geschwister‑Scholl Str. 32<br>[Your City, Postal Code]<br>Email: <a href="mailto:contact@example.com">contact@example.com</a>',
     'impressum.privacyTitle': 'Privacy Notice (GDPR)',
     'impressum.privacy.li1': 'Personal data: Username, email address (on registration) and learning progress are stored on the server.',
     'impressum.privacy.li2': 'Purpose: Providing the learning platform, storing learning progress, account management.',
@@ -2068,8 +2888,8 @@ const I18N = {
     'help.admin.title': 'Editor access',
     'help.admin.li1': 'To edit, import or delete, you must be logged in.',
     'impressum.subtitle': 'Information per § 5 TMG',
-    'impressum.body': '[Your Name]<br>[Your Address]<br>[Your City, Postal Code]<br>Email: <a href=\"mailto:contact@example.com\">contact@example.com</a>',
-    'impressum.short': '[Your Name] · [Your Address] · [Your City, Postal Code] · <a href=\"mailto:contact@example.com\">contact@example.com</a>',
+    'impressum.body': '[Your Name]<br>Geschwister‑Scholl Str. 32<br>[Your City, Postal Code]<br>Email: <a href=\"mailto:contact@example.com\">contact@example.com</a>',
+    'impressum.short': '[Your Name] · Geschwister‑Scholl Str. 32 · [Your City, Postal Code] · <a href=\"mailto:contact@example.com\">contact@example.com</a>',
     'api.title': 'API connection',
     'api.label': 'API URL',
     'api.save': 'Save',
@@ -2104,6 +2924,7 @@ const I18N = {
     'speedrun.aborted': 'Спидран прерван',
     'nav.community': 'Сообщество',
     'nav.pool': 'Редактор вопросов',
+    'nav.settings': 'Настройки',
     'nav.data': 'Импорт/Экспорт',
     'nav.about': 'Impressum',
     'nav.help': 'Помощь',
@@ -2267,6 +3088,23 @@ const I18N = {
     'leitner.modeClassic': 'Классический (по сроку)',
     'leitner.modeSimpleShort': 'Простой',
     'leitner.modeClassicShort': 'Классический',
+    'leitner.roadToMastery': 'Ваш путь к мастерству',
+    'leitner.masteryGoal': 'Цель: Освоить все вопросы',
+    'leitner.box1Label': 'Новичок',
+    'leitner.box2Label': 'Учусь',
+    'leitner.box3Label': 'Неплохо',
+    'leitner.box4Label': 'Почти',
+    'leitner.box5Label': 'Освоено',
+    'leitner.nextMilestone': 'Следующая веха',
+    'leitner.currentStreak': 'Текущая серия',
+    'leitner.sessionCount': 'Сессии',
+    'leitner.detailedStats': 'Подробная статистика',
+    'leitner.totalCorrect': 'Всего правильных',
+    'leitner.totalWrong': 'Всего неправильных',
+    'leitner.successRate': 'Процент успеха',
+    'leitner.longestStreak': 'Самая длинная серия',
+    'leitner.milestonesReached': 'Достигнутые вехи',
+    'leitner.noMilestones': 'Пока не достигнуто',
     'leitner.multiHint': 'Примечание: возможен множественный выбор.',
     'leitner.next': 'Дальше',
     'leitner.needAnswer': 'Сначала выберите ответ.',
@@ -2336,9 +3174,9 @@ const I18N = {
     'data.dataset.append': 'Добавить к активному набору',
     'data.defaultImport': 'Загрузка начальных наборов…',
     'gate.title': 'Выберите профиль',
-    'gate.subtitle': 'Готов проверить знания? Получай XP, бросай вызов друзьям и становись экспертом.',
+    'gate.subtitle': 'Учись умнее с 6 различными режимами',
     'gate.title': 'Добро пожаловать',
-    'gate.subtitle': 'Готов проверить знания? Получай XP, бросай вызов друзьям и становись экспертом.',
+    'gate.subtitle': 'Учись умнее с 6 различными режимами',
     'gate.disclaimer': 'Частный проект для учебных целей. Без гарантии безошибочной работы.',
     'gate.account.title': 'Аккаунт',
     'gate.account.subtitle': 'Вход или создание аккаунта.',
@@ -2457,7 +3295,7 @@ const I18N = {
     'footer.credits': 'Prüfungstrainer v42.0 • GPL‑3.0 • API‑на основе • Сделано с ❤️ • Credits: Andre Stiebitz',
     'impressum.title': 'Impressum',
     'impressum.subtitle': 'Сведения в соответствии с § 5 TMG',
-    'impressum.body': '[Your Name]<br>[Your Address]<br>[Your City, Postal Code]<br>Email: <a href="mailto:contact@example.com">contact@example.com</a>',
+    'impressum.body': '[Your Name]<br>Geschwister‑Scholl Str. 32<br>[Your City, Postal Code]<br>Email: <a href="mailto:contact@example.com">contact@example.com</a>',
     'impressum.privacyTitle': 'Уведомление о конфиденциальности (GDPR)',
     'impressum.privacy.li1': 'Персональные данные: имя пользователя, адрес электронной почты (при регистрации) и прогресс обучения хранятся на сервере.',
     'impressum.privacy.li2': 'Цель: предоставление учебной платформы, сохранение прогресса, управление аккаунтом.',
@@ -2535,8 +3373,8 @@ const I18N = {
     'help.admin.title': 'Доступ к редактору',
     'help.admin.li1': 'Для редактирования, импорта или удаления нужно войти.',
     'impressum.subtitle': 'Информация согласно § 5 TMG',
-    'impressum.body': '[Your Name]<br>[Your Address]<br>[Your City, Postal Code]<br>E‑mail: <a href=\"mailto:contact@example.com\">contact@example.com</a>',
-    'impressum.short': '[Your Name] · [Your Address] · [Your City, Postal Code] · <a href=\"mailto:contact@example.com\">contact@example.com</a>',
+    'impressum.body': '[Your Name]<br>Geschwister‑Scholl Str. 32<br>[Your City, Postal Code]<br>E‑mail: <a href=\"mailto:contact@example.com\">contact@example.com</a>',
+    'impressum.short': '[Your Name] · Geschwister‑Scholl Str. 32 · [Your City, Postal Code] · <a href=\"mailto:contact@example.com\">contact@example.com</a>',
     'api.title': 'Подключение API',
     'api.label': 'API‑URL',
     'api.save': 'Сохранить',
@@ -2610,6 +3448,8 @@ function applyTheme(theme){
   localStorage.setItem(THEME_KEY, t);
   const btn = $('#btnTheme');
   if(btn){ btn.textContent = t === 'light' ? '🌞' : '🌙'; }
+  const btnGate = $('#btnThemeGate');
+  if(btnGate){ btnGate.textContent = t === 'light' ? '🌞' : '🌙'; }
 }
 function applyTextScale(scale){
   const val = (scale === 'sm' || scale === 'md' || scale === 'lg') ? scale : 'md';
@@ -2653,33 +3493,116 @@ const $$ = sel => Array.from(document.querySelectorAll(sel));
 const uid = () => Math.random().toString(36).slice(2,10);
 const now = () => Date.now();
 const shuffle = (arr) => arr.slice().sort(()=>Math.random()-.5);
-function showProfileGate(force=false){
+function showProfileGate(force){
   const gate = $('#profileGate');
   if(!gate) return;
-  const shouldShow = !currentUser || force;
+  // force=true: show, force=false: hide, force=undefined: auto (!currentUser)
+  const shouldShow = force === true ? true : force === false ? false : !currentUser;
   gate.classList.toggle('active', shouldShow);
   gate.setAttribute('aria-hidden', shouldShow ? 'false' : 'true');
   document.body.classList.toggle('gate-open', shouldShow);
   document.body.classList.toggle('auth-required', shouldShow);
 }
 function setGateMode(mode){
+  // Legacy function - now a no-op since we only have magic link mode
   GATE_MODE = mode;
-  const showRegister = mode === 'register';
-  const showForgot = mode === 'forgot';
-  const showReset = mode === 'reset';
-  $('#gateRegisterFields')?.classList.toggle('hidden', !showRegister);
-  $('#gateForgotFields')?.classList.toggle('hidden', !showForgot);
-  $('#gateResetFields')?.classList.toggle('hidden', !showReset);
-  $('#gateLoginFields')?.classList.toggle('hidden', showRegister || showForgot || showReset);
-  const toggle = $('#btnGateToggleMode');
-  if(toggle){
-    if(showForgot || showReset){
-      toggle.textContent = t('gate.login.link', CURRENT_LANG);
-    }else{
-      toggle.textContent = t(showRegister ? 'gate.login.link' : 'gate.register.link', CURRENT_LANG);
+}
+// Global settings from server
+let PUBLIC_SETTINGS = null;
+
+async function loadPublicSettings() {
+  try {
+    const res = await fetch(`${API_BASE}/settings/public`);
+    if (res.ok) {
+      const data = await res.json();
+      PUBLIC_SETTINGS = data.settings || null;
+      console.log('[Settings] Loaded public settings:', PUBLIC_SETTINGS);
+      applyPublicSettings();
     }
+  } catch (err) {
+    console.error('[Settings] Failed to load public settings:', err);
   }
 }
+
+function applyPublicSettings() {
+  if (!PUBLIC_SETTINGS) return;
+
+  // Show/hide font size button based on setting
+  const fontSizeBtn = $('#btnTextSize');
+  const fontSizeEnabled = PUBLIC_SETTINGS.features?.fontSizeToggle === true;
+  if (fontSizeBtn) {
+    fontSizeBtn.style.display = fontSizeEnabled ? '' : 'none';
+  }
+}
+
+function isGuest() {
+  return !currentUser || !currentUser.id;
+}
+
+function canAccessFeature(feature) {
+  if (!isGuest()) return true; // Logged-in users can access everything
+
+  if (!PUBLIC_SETTINGS || !PUBLIC_SETTINGS.guest_access) {
+    // Default: guests can access training and swipe only
+    return ['training', 'swipe'].includes(feature);
+  }
+
+  return !!PUBLIC_SETTINGS.guest_access[feature];
+}
+
+function showGuestBanner(show){
+  const banner = $('#guestBanner');
+  if (!banner) return;
+
+  if (show && isGuest()) {
+    banner.classList.remove('hidden');
+  } else {
+    banner.classList.add('hidden');
+  }
+
+  // Disable tabs based on guest access
+  enforceGuestAccess();
+}
+
+function enforceGuestAccess() {
+  if (!isGuest()) return; // Logged-in users get full access
+
+  // Disable tabs based on settings
+  const tabMappings = {
+    'train': 'training',
+    'swipe': 'swipe',
+    'exam': 'exam',
+    'leitner': 'leitner',
+    'community': 'community'
+  };
+
+  Object.entries(tabMappings).forEach(([tab, feature]) => {
+    const btn = $(`button.tabbtn[data-tab="${tab}"]`);
+    if (!btn) return;
+
+    const allowed = canAccessFeature(feature);
+    if (!allowed) {
+      btn.disabled = true;
+      btn.title = 'Login erforderlich';
+      btn.style.opacity = '0.5';
+    } else {
+      btn.disabled = false;
+      btn.title = '';
+      btn.style.opacity = '1';
+    }
+  });
+
+  // Disable pool editor for guests
+  const poolEditorAccess = PUBLIC_SETTINGS?.features?.poolEditorAccess || 'admin_only';
+  if (poolEditorAccess === 'admin_only' || poolEditorAccess === 'disabled') {
+    updatePoolEditorAccess();
+  }
+}
+
+// Guest banner login button
+$('#btnGuestBannerLogin')?.addEventListener('click', () => {
+  showProfileGate(true);
+});
 $('#btnLangMenu')?.addEventListener('click', (e)=>{
   e.preventDefault();
   $('#langMenu')?.classList.toggle('open');
@@ -2695,10 +3618,7 @@ document.addEventListener('click', (e)=>{
   menu?.classList.remove('open');
   menuGate?.classList.remove('open');
 });
-if(RESET_TOKEN){
-  showProfileGate(true);
-  setGateMode('reset');
-}
+// RESET_TOKEN check removed - password reset no longer used with magic link auth
 $('#langMenu')?.querySelectorAll('button[data-lang]').forEach(btn=>{
   btn.addEventListener('click', async (e)=>{
     const lang = e.currentTarget.dataset.lang;
@@ -2737,6 +3657,10 @@ $('#btnTheme')?.addEventListener('click', ()=>{
   const current = document.documentElement.getAttribute('data-theme') || 'dark';
   applyTheme(current === 'light' ? 'dark' : 'light');
 });
+$('#btnThemeGate')?.addEventListener('click', ()=>{
+  const current = document.documentElement.getAttribute('data-theme') || 'dark';
+  applyTheme(current === 'light' ? 'dark' : 'light');
+});
 $('#btnTextSize')?.addEventListener('click', ()=>{
   const current = localStorage.getItem(TEXT_SCALE_KEY) || 'md';
   const next = current === 'sm' ? 'md' : (current === 'md' ? 'lg' : 'sm');
@@ -2749,6 +3673,11 @@ $('#btnMenusToggle')?.addEventListener('click', ()=>{
 /** ----------------------------
  *  Auth / Editor
  *  ---------------------------- */
+function authHeaders(){
+  const headers = { 'Content-Type': 'application/json' };
+  if(accessToken){ headers['Authorization'] = `Bearer ${accessToken}`; }
+  return headers;
+}
 async function apiFetch(path, options = {}){
   const url = API_BASE + path;
   const headers = new Headers(options.headers || {});
@@ -2842,7 +3771,7 @@ async function refreshMe(){
   if(!accessToken){
     currentUser = null;
     updateAdminUI();
-    showProfileGate(true);
+    // Don't show gate here - let init logic decide
     return;
   }
   try{
@@ -2851,7 +3780,7 @@ async function refreshMe(){
     currentUser = null;
   }
   updateAdminUI();
-  showProfileGate(!currentUser);
+  // Don't show gate here - let init logic decide
   if(document.querySelector('#tab-account.active')){
     renderUserStats();
   }
@@ -2939,6 +3868,7 @@ function updateAdminUI(){
   if(msg){ msg.textContent = currentUser ? `${currentUser.email} · Rolle: ${currentUser.role}` : 'Bitte einloggen.'; }
   updatePoolEditorAccess();
   $$('.needsAdmin').forEach(el=>{ el.disabled = !isAdmin; });
+  if (isAdmin) loadSystemSettings().catch(e => console.error('[Settings] Auto-load failed:', e));
   const optIn = $('#leaderboardOptIn');
   const name = $('#displayName');
   const btnSave = $('#btnSaveLeaderboard');
@@ -2962,90 +3892,384 @@ $('#btnDoLogin')?.addEventListener('click', async ()=>{
     await showAlert('Login fehlgeschlagen: ' + e.message, 'Login');
   }
 });
-$('#btnGateLogin')?.addEventListener('click', async ()=>{
-  const ident = $('#gateLoginEmail')?.value.trim();
-  const password = $('#gateLoginPassword')?.value.trim();
-  if(!ident || !password){ await showAlert('Bitte Benutzername/E‑Mail und Passwort eingeben.'); return; }
-  try{
-    await login(ident, password);
-    $('#gateLoginPassword').value = '';
-    await postLoginInit();
-    showProfileGate(false);
-    switchTab('train');
-    await showAlert('Login erfolgreich.', 'Login');
-  }catch(e){
-    await showAlert('Login fehlgeschlagen: ' + e.message, 'Login');
-  }
-});
-$('#btnGateRegister')?.addEventListener('click', async ()=>{
-  const username = $('#gateRegisterUsername')?.value.trim();
-  const email = $('#gateRegisterEmail')?.value.trim();
-  const password = $('#gateRegisterPassword')?.value.trim();
-  const password2 = $('#gateRegisterPassword2')?.value.trim();
-  if(!username || !email || !password || !password2){
-    await showAlert('Bitte Benutzername, E-Mail und beide Passwörter eingeben.', 'Registrierung');
+// ============================================================================
+// MAGIC LINK AUTHENTICATION HANDLERS
+// ============================================================================
+
+// Store email for code verification
+let MAGIC_EMAIL = '';
+let VERIFYING_CODE = false;
+let AUTO_VERIFY_TIMEOUT = null;
+
+// Request Magic Link - Shared handler function
+const doRequestMagicLink = async ()=>{
+  const email = $('#gateLoginEmail')?.value.trim();
+  const emailInput = $('#gateLoginEmail');
+
+  if(!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+    if(emailInput) {
+      emailInput.style.borderColor = '#ef4444';
+      emailInput.style.animation = 'shake 0.3s';
+      setTimeout(() => {
+        emailInput.style.borderColor = '';
+        emailInput.style.animation = '';
+      }, 300);
+    }
+    await showAlert('Bitte gültige E-Mail-Adresse eingeben.', 'Login');
     return;
   }
-  if(password !== password2){
-    await showAlert('Passwörter stimmen nicht überein.', 'Registrierung');
-    return;
-  }
+
+  // Show loading state
+  const btn = $('#btnRequestMagicLink');
+  const btnText = $('#btnRequestText');
+  const spinner = $('#btnRequestSpinner');
+  if(btn) btn.disabled = true;
+  if(btnText) btnText.style.opacity = '0.5';
+  if(spinner) spinner.style.display = 'inline-block';
+
+  MAGIC_EMAIL = email;
   try{
-    await apiRegister(email, username, password, 'student');
-    // Auto-login after successful registration
-    try{
-      await doLogin(username, password);
-    }catch(loginErr){
-      // If auto-login fails, show login form with pre-filled credentials
-      $('#gateRegisterPassword').value = '';
-      $('#gateRegisterPassword2').value = '';
-      setGateMode('login');
-      if($('#gateLoginEmail')) $('#gateLoginEmail').value = username;
-      await showAlert(t('gate.register.success', CURRENT_LANG) + ' Bitte einloggen.', 'Registrierung');
+    const res = await fetch(`${API_BASE}/auth/request-magic-link`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    if(!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'request_failed');
+    }
+
+    // Hide welcome, show code entry
+    $('#gateWelcome')?.classList.add('hidden');
+    $('#gateCodeEntry')?.classList.remove('hidden');
+    const codeInput = $('#gateLoginCode');
+    if(codeInput) {
+      codeInput.focus();
+      codeInput.value = '';
+    }
+
+    // Update code entry header with email
+    const codeHeader = $('#gateCodeHeader');
+    if(codeHeader){
+      codeHeader.innerHTML = `Code wurde an <strong>${email}</strong> gesendet! 📧<br><span style="font-size:11px; color:var(--muted)">Prüfe dein Postfach (auch Spam-Ordner)</span>`;
     }
   }catch(e){
-    await showAlert('Account erstellen fehlgeschlagen: ' + e.message, 'Fehler');
+    const errorMsg = e.message === 'request_failed'
+      ? 'Verbindungsfehler. Bitte prüfe deine Internetverbindung.'
+      : 'Fehler beim Senden: ' + e.message;
+    await showAlert(errorMsg, 'Login');
+  } finally {
+    // Reset loading state
+    if(btn) btn.disabled = false;
+    if(btnText) btnText.style.opacity = '1';
+    if(spinner) spinner.style.display = 'none';
+  }
+};
+
+// Request Magic Link: Button handler
+$('#btnRequestMagicLink')?.addEventListener('click', async (e)=>{
+  e.preventDefault();
+  await doRequestMagicLink();
+});
+
+// Request Magic Link: Form submit handler (for iOS "Go" button)
+const magicLinkForm = $('#gateLoginFields');
+if(magicLinkForm){
+  magicLinkForm.onsubmit = function(e){
+    e.preventDefault();
+    doRequestMagicLink();
+    return false;
+  };
+}
+
+// Email Validation: Live feedback
+$('#gateLoginEmail')?.addEventListener('input', (e)=>{
+  const email = e.target.value.trim();
+  const icon = $('#emailValidIcon');
+
+  if(!icon) return;
+
+  if(email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+    icon.style.display = 'block';
+    icon.style.color = '#10b981';
+    e.target.style.borderColor = '#10b981';
+  } else {
+    icon.style.display = 'none';
+    e.target.style.borderColor = '';
   }
 });
-$('#btnGateToggleMode')?.addEventListener('click', ()=>{
-  if(GATE_MODE === 'forgot' || GATE_MODE === 'reset'){
-    setGateMode('login');
+
+// Email: Clear validation on focus
+$('#gateLoginEmail')?.addEventListener('focus', (e)=>{
+  e.target.style.borderColor = '';
+});
+
+// Verify Code - Handler function
+const doVerifyCode = async ()=>{
+  // Prevent multiple simultaneous verifications
+  if(VERIFYING_CODE) return;
+
+  const code = $('#gateLoginCode')?.value.trim();
+  const codeInput = $('#gateLoginCode');
+
+  if(!code || !/^\d{6}$/.test(code)){
+    if(codeInput) {
+      codeInput.classList.add('invalid');
+      setTimeout(() => codeInput.classList.remove('invalid'), 300);
+    }
+    await showAlert('Bitte 6-stelligen Code eingeben.', 'Login');
     return;
   }
-  const isRegister = !$('#gateRegisterFields')?.classList.contains('hidden');
-  setGateMode(isRegister ? 'login' : 'register');
+
+  // Show loading state
+  VERIFYING_CODE = true;
+  const btn = $('#btnVerifyCode');
+  const btnText = $('#btnVerifyText');
+  const spinner = $('#btnVerifySpinner');
+  const hint = $('#codeHint');
+
+  if(btn) btn.disabled = true;
+  if(btnText) btnText.style.opacity = '0.5';
+  if(spinner) spinner.style.display = 'inline-block';
+  if(hint) hint.textContent = 'Code wird geprüft...';
+  if(codeInput) codeInput.disabled = true;
+
+  try{
+    const res = await fetch(`${API_BASE}/auth/verify-code`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: MAGIC_EMAIL, code })
+    });
+    if(!res.ok){
+      const err = await res.json();
+      if(err.error === 'invalid_code') throw new Error('Falscher Code.');
+      if(err.error === 'code_expired') throw new Error('Code abgelaufen. Neuen anfordern.');
+      if(err.error === 'code_already_used') throw new Error('Code bereits verwendet.');
+      throw new Error(err.error || 'verification_failed');
+    }
+
+    const data = await res.json();
+    const token = data.access_token;
+    const user = data.user;
+
+    if(!token || !user) throw new Error('Keine Authentifizierungsdaten erhalten');
+
+    // Store token and user (both localStorage AND global variable!)
+    localStorage.setItem('accessToken', token);
+    localStorage.setItem('currentUser', JSON.stringify(user));
+    accessToken = token;  // CRITICAL: Set global variable!
+    currentUser = user;
+    LOGIN_AT = Date.now();  // Track login time
+
+    // Clear form
+    $('#gateLoginCode').value = '';
+    MAGIC_EMAIL = '';
+
+    // Initialize app
+    await postLoginInit();
+    showProfileGate(false);
+    showGuestBanner(false);  // Hide guest banner after login
+    switchTab('train');
+    // Mark code as valid
+    if(codeInput) codeInput.classList.add('valid');
+    if(hint) hint.textContent = 'Erfolgreich! Lade App...';
+
+    await showAlert('Login erfolgreich! 🎉', 'Login');
+  }catch(e){
+    // Mark code as invalid and clear it
+    if(codeInput) {
+      codeInput.classList.add('invalid');
+      setTimeout(() => {
+        codeInput.classList.remove('invalid');
+        codeInput.value = '';
+        codeInput.focus();
+      }, 600);
+    }
+
+    // Better error messages
+    let errorMsg = 'Login fehlgeschlagen: ' + e.message;
+    if(e.message.includes('Falscher Code')) {
+      errorMsg = '❌ Falscher Code. Bitte erneut versuchen oder neuen Code anfordern.';
+    } else if(e.message.includes('abgelaufen')) {
+      errorMsg = '⏰ Code abgelaufen. Klicke auf "Code erneut senden".';
+    } else if(e.message.includes('bereits verwendet')) {
+      errorMsg = '♻️ Code wurde bereits verwendet. Fordere einen neuen Code an.';
+    }
+
+    await showAlert(errorMsg, 'Login');
+  } finally {
+    // Reset loading state
+    VERIFYING_CODE = false;
+    if(btn) btn.disabled = false;
+    if(btnText) btnText.style.opacity = '1';
+    if(spinner) spinner.style.display = 'none';
+    if(codeInput) codeInput.disabled = false;
+    if(hint && !codeInput?.classList.contains('valid')) {
+      hint.textContent = 'Code wird nach Eingabe automatisch geprüft...';
+    }
+  }
+};
+
+// Verify Code: Button handler
+$('#btnVerifyCode')?.addEventListener('click', doVerifyCode);
+
+// Verify Code: Auto-submit on Enter key
+$('#gateLoginCode')?.addEventListener('keypress', (e)=>{
+  if(e.key === 'Enter'){
+    e.preventDefault();
+    doVerifyCode();
+  }
 });
+
+// Verify Code: Auto-verify when 6 digits entered (with debouncing)
+$('#gateLoginCode')?.addEventListener('input', (e)=>{
+  const input = e.target;
+  const clearBtn = $('#btnClearCode');
+
+  // Show/hide clear button
+  if(clearBtn) clearBtn.style.display = input.value ? 'block' : 'none';
+
+  // Remove non-digits
+  input.value = input.value.replace(/\D/g, '');
+
+  // Clear any pending auto-verify
+  if(AUTO_VERIFY_TIMEOUT){
+    clearTimeout(AUTO_VERIFY_TIMEOUT);
+    AUTO_VERIFY_TIMEOUT = null;
+  }
+
+  const code = input.value;
+  if(/^\d{6}$/.test(code)){
+    // Small delay to let user see the full code and debounce rapid input
+    AUTO_VERIFY_TIMEOUT = setTimeout(() => {
+      AUTO_VERIFY_TIMEOUT = null;
+      doVerifyCode();
+    }, 500);
+  }
+});
+
+// Verify Code: Paste support (paste full 6-digit code)
+$('#gateLoginCode')?.addEventListener('paste', (e)=>{
+  e.preventDefault();
+  const paste = (e.clipboardData || window.clipboardData).getData('text');
+  const digits = paste.replace(/\D/g, '').slice(0, 6);
+  e.target.value = digits;
+
+  // Trigger input event to activate auto-verify
+  e.target.dispatchEvent(new Event('input', { bubbles: true }));
+});
+
+// Clear Code Button
+$('#btnClearCode')?.addEventListener('click', ()=>{
+  const input = $('#gateLoginCode');
+  const clearBtn = $('#btnClearCode');
+  if(input) {
+    input.value = '';
+    input.focus();
+    input.classList.remove('valid', 'invalid');
+  }
+  if(clearBtn) clearBtn.style.display = 'none';
+  if(AUTO_VERIFY_TIMEOUT) {
+    clearTimeout(AUTO_VERIFY_TIMEOUT);
+    AUTO_VERIFY_TIMEOUT = null;
+  }
+});
+
+// Back to Email: Handler
+$('#btnBackToEmail')?.addEventListener('click', ()=>{
+  $('#gateCodeEntry')?.classList.add('hidden');
+  $('#gateWelcome')?.classList.remove('hidden');
+  $('#gateLoginCode').value = '';
+  $('#gateLoginEmail')?.focus();
+});
+
+// Resend Code: Handler
+$('#btnResendCode')?.addEventListener('click', async ()=>{
+  if(!MAGIC_EMAIL){
+    await showAlert('Keine E-Mail-Adresse gespeichert.', 'Login');
+    return;
+  }
+  try{
+    const res = await fetch(`${API_BASE}/auth/request-magic-link`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: MAGIC_EMAIL })
+    });
+    if(!res.ok) throw new Error('resend_failed');
+    await showAlert('Neuer Code wurde verschickt! 📧', 'Login');
+  }catch(e){
+    await showAlert('Fehler beim Senden: ' + e.message, 'Login');
+  }
+});
+
+// Guest Mode: Handler
+$('#btnGuestMode')?.addEventListener('click', ()=>{
+  // Close gate without authentication
+  currentUser = null;
+  localStorage.removeItem('accessToken');
+  localStorage.removeItem('currentUser');
+
+  // Update UI
+  updateAdminUI();
+  showProfileGate(false);
+  switchTab('train');
+
+  // Show guest banner and enforce access control
+  showGuestBanner(true);
+  enforceGuestAccess();
+});
+
+// On page load: Check for ?token=xxx in URL (Magic Link click)
+(async ()=>{
+  const urlParams = new URLSearchParams(window.location.search);
+  const magicToken = urlParams.get('token');
+
+  if(magicToken && magicToken.length === 64){
+    try{
+      const res = await fetch(`${API_BASE}/auth/verify-magic-link?token=${magicToken}`);
+      if(!res.ok){
+        const err = await res.json();
+        if(err.error === 'invalid_token') throw new Error('Ungültiger Link.');
+        if(err.error === 'token_expired') throw new Error('Link abgelaufen.');
+        if(err.error === 'token_already_used') throw new Error('Link bereits verwendet.');
+        throw new Error(err.error || 'verification_failed');
+      }
+
+      const data = await res.json();
+      const token = data.access_token;
+      const user = data.user;
+
+      if(!token || !user) throw new Error('Keine Authentifizierungsdaten erhalten');
+
+      // Store token and user (both localStorage AND global variable!)
+      localStorage.setItem('accessToken', token);
+      localStorage.setItem('currentUser', JSON.stringify(user));
+      accessToken = token;  // CRITICAL: Set global variable!
+      currentUser = user;
+      LOGIN_AT = Date.now();  // Track login time
+
+      // Remove token from URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+
+      // Initialize app
+      await postLoginInit();
+      showProfileGate(false);
+      showGuestBanner(false);  // Hide guest banner after login
+      switchTab('train');
+      await showAlert('Login erfolgreich! 🎉', 'Login');
+    }catch(e){
+      await showAlert('Login-Link fehlgeschlagen: ' + e.message, 'Login');
+      showProfileGate(true);
+    }
+  }
+})();
+
+// ============================================================================
+// END MAGIC LINK AUTHENTICATION HANDLERS
+// ============================================================================
+
 $('#btnAccountTop')?.addEventListener('click', ()=> switchTab('account'));
 $('#modalOk')?.addEventListener('click', hideModal);
-$('#btnGateForgotLink')?.addEventListener('click', ()=>{
-  setGateMode('forgot');
-});
-$('#btnGateForgotSend')?.addEventListener('click', async ()=>{
-  const email = $('#gateForgotEmail')?.value.trim();
-  if(!email){ await showAlert(t('gate.forgot.needEmail', CURRENT_LANG)); return; }
-  try{
-    await apiForgotPassword(email);
-    await showAlert(t('gate.forgot.sent', CURRENT_LANG), t('gate.forgot.title', CURRENT_LANG));
-    setGateMode('login');
-  }catch(e){
-    await showAlert(t('gate.forgot.sent', CURRENT_LANG), t('gate.forgot.title', CURRENT_LANG));
-    setGateMode('login');
-  }
-});
-$('#btnGateReset')?.addEventListener('click', async ()=>{
-  const pw1 = $('#gateResetPassword')?.value.trim();
-  const pw2 = $('#gateResetPassword2')?.value.trim();
-  if(!pw1 || !pw2){ await showAlert(t('gate.reset.needPw', CURRENT_LANG)); return; }
-  if(pw1 !== pw2){ await showAlert(t('gate.reset.noMatch', CURRENT_LANG)); return; }
-  if(!RESET_TOKEN){ await showAlert(t('gate.reset.noToken', CURRENT_LANG)); return; }
-  try{
-    await apiResetPassword(RESET_TOKEN, pw1);
-    await showAlert(t('gate.reset.ok', CURRENT_LANG), t('gate.reset.title', CURRENT_LANG));
-    setGateMode('login');
-  }catch(e){
-    await showAlert(t('gate.reset.err', CURRENT_LANG), 'Fehler');
-  }
-});
 $('#btnSaveLeaderboard')?.addEventListener('click', async ()=>{
   if(!currentUser) return await showAlert(t('leaderboard.login', CURRENT_LANG));
   const optIn = $('#leaderboardOptIn')?.checked || false;
@@ -3150,6 +4374,386 @@ $('#btnDuelReset')?.addEventListener('click', async ()=>{
     await showAlert(t('community.duelsResetErr', CURRENT_LANG) + ' ' + e.message, 'Fehler');
   }
 });
+
+// ============================================================================
+// ADMIN DASHBOARD HANDLERS
+// ============================================================================
+
+// Global admin state
+let ADMIN_CURRENT_TAB = 'stats';
+let ADMIN_SETTINGS = {};
+let ADMIN_USERS_PAGE = 1;
+
+// Admin tab switching
+$$('[data-admin-tab]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const tab = btn.dataset.adminTab;
+    ADMIN_CURRENT_TAB = tab;
+
+    // Update button states
+    $$('[data-admin-tab]').forEach(b => b.classList.remove('primary'));
+    btn.classList.add('primary');
+
+    // Show/hide sections
+    $$('.admin-section').forEach(s => s.style.display = 'none');
+    $(`#admin-${tab}`)?.style?.display && ($(`#admin-${tab}`).style.display = 'block');
+
+    // Load data for tab
+    if (tab === 'stats') loadAdminStats();
+    if (tab === 'settings') loadAdminSettings();
+    if (tab === 'users') loadAdminUsers();
+    if (tab === 'audit') loadAdminAudit();
+  });
+});
+
+// Load admin stats
+async function loadAdminStats() {
+  if (!currentUser || currentUser.role !== 'admin') return;
+
+  try {
+    const token = localStorage.getItem('accessToken');
+    const res = await fetch(`${API_BASE}/admin/stats`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+
+    if (!res.ok) throw new Error('Failed to load stats');
+
+    const data = await res.json();
+    const html = `
+      <div style="background:var(--card-bg); padding:16px; border-radius:6px">
+        <div style="font-size:24px; font-weight:bold; color:var(--primary)">${data.users?.total || 0}</div>
+        <div class="muted">Gesamt User</div>
+        <div style="font-size:13px; margin-top:4px">Neu heute: ${data.users?.new_today || 0}</div>
+      </div>
+      <div style="background:var(--card-bg); padding:16px; border-radius:6px">
+        <div style="font-size:24px; font-weight:bold; color:var(--primary)">${data.pools?.total || 0}</div>
+        <div class="muted">Pools</div>
+        <div style="font-size:13px; margin-top:4px">Öffentlich: ${data.pools?.public || 0}</div>
+      </div>
+      <div style="background:var(--card-bg); padding:16px; border-radius:6px">
+        <div style="font-size:24px; font-weight:bold; color:var(--primary)">${data.questions?.total || 0}</div>
+        <div class="muted">Fragen</div>
+        <div style="font-size:13px; margin-top:4px">
+          ${data.questions?.by_language?.map(l => `${l.lang}: ${l.count}`).join(', ') || ''}
+        </div>
+      </div>
+    `;
+
+    $('#adminSystemStats').innerHTML = html;
+  } catch (err) {
+    console.error('[ADMIN] Stats error:', err);
+    $('#adminSystemStats').innerHTML = '<div class="muted">Fehler beim Laden der Statistiken</div>';
+  }
+}
+
+// Load admin settings
+async function loadAdminSettings() {
+  if (!currentUser || currentUser.role !== 'admin') return;
+
+  try {
+    const token = localStorage.getItem('accessToken');
+    const res = await fetch(`${API_BASE}/admin/settings`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+
+    if (!res.ok) throw new Error('Failed to load settings');
+
+    const data = await res.json();
+    ADMIN_SETTINGS = data.settings || {};
+
+    // Populate guest access checkboxes
+    const guestAccess = ADMIN_SETTINGS.guest_access || {};
+    $('#setting_guest_training').checked = !!guestAccess.training;
+    $('#setting_guest_swipe').checked = !!guestAccess.swipe;
+    $('#setting_guest_exam').checked = !!guestAccess.exam;
+    $('#setting_guest_leitner').checked = !!guestAccess.leitner;
+    $('#setting_guest_community').checked = !!guestAccess.community;
+    $('#setting_guest_statistics').checked = !!guestAccess.statistics;
+
+    // Populate languages
+    const languages = ADMIN_SETTINGS.languages || {};
+    if (languages.de) {
+      $('#setting_lang_de').checked = languages.de.enabled;
+      if (languages.de.default) $('input[name="defaultLang"][value="de"]').checked = true;
+    }
+    if (languages.en) {
+      $('#setting_lang_en').checked = languages.en.enabled;
+      if (languages.en.default) $('input[name="defaultLang"][value="en"]').checked = true;
+    }
+    if (languages.ru) {
+      $('#setting_lang_ru').checked = languages.ru.enabled;
+      if (languages.ru.default) $('input[name="defaultLang"][value="ru"]').checked = true;
+    }
+
+    // Populate branding
+    const branding = ADMIN_SETTINGS.branding || {};
+    $('#setting_appName').value = branding.appName || 'QuizDojo';
+    $('#setting_showGithubLink').checked = !!branding.showGithubLink;
+    $('#setting_customFooter').value = branding.customFooterText || '';
+
+    // Populate features
+    const features = ADMIN_SETTINGS.features || {};
+    $('#setting_gamification').checked = !!features.gamification;
+    $('#setting_leaderboards').checked = !!features.leaderboards;
+    $('#setting_duels').checked = !!features.duels;
+    $('#setting_contests').checked = !!features.contests;
+    $('#setting_poolEditorAccess').value = features.poolEditorAccess || 'admin_only';
+
+  } catch (err) {
+    console.error('[ADMIN] Settings error:', err);
+    await showAlert('Fehler beim Laden der Einstellungen', 'Admin');
+  }
+}
+
+// Save admin settings
+$('#btnSaveSettings')?.addEventListener('click', async () => {
+  if (!currentUser || currentUser.role !== 'admin') return;
+
+  const statusEl = $('#settingsSaveStatus');
+  if (statusEl) statusEl.textContent = 'Speichere...';
+
+  try {
+    const token = localStorage.getItem('accessToken');
+
+    // Gather all settings
+    const guestAccess = {
+      training: $('#setting_guest_training').checked,
+      swipe: $('#setting_guest_swipe').checked,
+      exam: $('#setting_guest_exam').checked,
+      leitner: $('#setting_guest_leitner').checked,
+      community: $('#setting_guest_community').checked,
+      statistics: $('#setting_guest_statistics').checked,
+      poolCreation: false,
+      poolEditing: 'owner'
+    };
+
+    const defaultLang = $('input[name="defaultLang"]:checked')?.value || 'de';
+    const languages = {
+      de: {
+        enabled: $('#setting_lang_de').checked,
+        default: defaultLang === 'de',
+        label: 'Deutsch'
+      },
+      en: {
+        enabled: $('#setting_lang_en').checked,
+        default: defaultLang === 'en',
+        label: 'English'
+      },
+      ru: {
+        enabled: $('#setting_lang_ru').checked,
+        default: defaultLang === 'ru',
+        label: 'Русский'
+      }
+    };
+
+    const branding = {
+      appName: $('#setting_appName').value.trim() || 'QuizDojo',
+      showGithubLink: $('#setting_showGithubLink').checked,
+      customFooterText: $('#setting_customFooter').value.trim()
+    };
+
+    const features = {
+      gamification: $('#setting_gamification').checked,
+      leaderboards: $('#setting_leaderboards').checked,
+      duels: $('#setting_duels').checked,
+      contests: $('#setting_contests').checked,
+      poolEditorAccess: $('#setting_poolEditorAccess').value
+    };
+
+    // Save each setting category
+    const updates = [
+      { key: 'guest_access', value: guestAccess },
+      { key: 'languages', value: languages },
+      { key: 'branding', value: branding },
+      { key: 'features', value: features }
+    ];
+
+    for (const update of updates) {
+      const res = await fetch(`${API_BASE}/admin/settings/${update.key}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ value: update.value })
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.message || `Failed to update ${update.key}`);
+      }
+    }
+
+    if (statusEl) statusEl.textContent = '✅ Gespeichert!';
+    setTimeout(() => { if (statusEl) statusEl.textContent = ''; }, 3000);
+
+  } catch (err) {
+    console.error('[ADMIN] Save settings error:', err);
+    if (statusEl) statusEl.textContent = '❌ Fehler: ' + err.message;
+    await showAlert('Fehler beim Speichern: ' + err.message, 'Admin');
+  }
+});
+
+// Load admin users
+async function loadAdminUsers(page = 1) {
+  if (!currentUser || currentUser.role !== 'admin') return;
+
+  ADMIN_USERS_PAGE = page;
+
+  try {
+    const token = localStorage.getItem('accessToken');
+    const search = $('#adminUserSearch')?.value.trim() || '';
+    const role = $('#adminUserRoleFilter')?.value || '';
+
+    const params = new URLSearchParams({ page: page.toString(), limit: '20' });
+    if (search) params.append('search', search);
+    if (role) params.append('role', role);
+
+    const res = await fetch(`${API_BASE}/admin/users?${params}`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+
+    if (!res.ok) throw new Error('Failed to load users');
+
+    const data = await res.json();
+    const users = data.users || [];
+    const total = data.total || 0;
+    const pages = data.pages || 1;
+
+    // Render user table
+    let html = `
+      <table style="width:100%; border-collapse:collapse; font-size:13px">
+        <thead>
+          <tr style="background:var(--header-bg); text-align:left">
+            <th style="padding:8px; border-bottom:2px solid var(--border)">Username</th>
+            <th style="padding:8px; border-bottom:2px solid var(--border)">Email</th>
+            <th style="padding:8px; border-bottom:2px solid var(--border)">Role</th>
+            <th style="padding:8px; border-bottom:2px solid var(--border)">Erstellt</th>
+            <th style="padding:8px; border-bottom:2px solid var(--border)">Logins</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+
+    users.forEach(u => {
+      const date = new Date(u.created_at).toLocaleDateString('de-DE');
+      html += `
+        <tr style="border-bottom:1px solid var(--border)">
+          <td style="padding:8px">${u.username || '-'}</td>
+          <td style="padding:8px">${u.email}</td>
+          <td style="padding:8px"><span class="pill ${u.role === 'admin' ? 'admin' : ''}">${u.role}</span></td>
+          <td style="padding:8px">${date}</td>
+          <td style="padding:8px">${u.login_count || 0}</td>
+        </tr>
+      `;
+    });
+
+    html += '</tbody></table>';
+
+    if (users.length === 0) {
+      html = '<div class="muted">Keine User gefunden</div>';
+    }
+
+    $('#adminUserList').innerHTML = html;
+
+    // Pagination
+    let pagination = `<div class="muted" style="margin-right:auto">Gesamt: ${total} User</div>`;
+    for (let p = 1; p <= pages; p++) {
+      const active = p === page ? 'primary' : '';
+      pagination += `<button class="btn btn-sm ${active}" onclick="loadAdminUsers(${p})">${p}</button>`;
+    }
+    $('#adminUserPagination').innerHTML = pagination;
+
+  } catch (err) {
+    console.error('[ADMIN] Users error:', err);
+    $('#adminUserList').innerHTML = '<div class="muted">Fehler beim Laden der User</div>';
+  }
+}
+
+$('#btnAdminUserSearch')?.addEventListener('click', () => loadAdminUsers(1));
+
+// Load audit log
+async function loadAdminAudit() {
+  if (!currentUser || currentUser.role !== 'admin') return;
+
+  try {
+    const token = localStorage.getItem('accessToken');
+    const action = $('#adminAuditActionFilter')?.value || '';
+    const limit = $('#adminAuditLimit')?.value || '50';
+
+    const params = new URLSearchParams({ limit });
+    if (action) params.append('action', action);
+
+    const res = await fetch(`${API_BASE}/admin/audit-log?${params}`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+
+    if (!res.ok) throw new Error('Failed to load audit log');
+
+    const data = await res.json();
+    const logs = data.logs || [];
+
+    let html = `
+      <table style="width:100%; border-collapse:collapse; font-size:13px">
+        <thead>
+          <tr style="background:var(--header-bg); text-align:left">
+            <th style="padding:8px; border-bottom:2px solid var(--border)">Zeit</th>
+            <th style="padding:8px; border-bottom:2px solid var(--border)">Aktion</th>
+            <th style="padding:8px; border-bottom:2px solid var(--border)">User ID</th>
+            <th style="padding:8px; border-bottom:2px solid var(--border)">IP</th>
+            <th style="padding:8px; border-bottom:2px solid var(--border)">Details</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+
+    logs.forEach(log => {
+      const date = new Date(log.created_at).toLocaleString('de-DE');
+      const details = log.details ? JSON.stringify(log.details).substring(0, 100) : '-';
+      html += `
+        <tr style="border-bottom:1px solid var(--border)">
+          <td style="padding:8px">${date}</td>
+          <td style="padding:8px"><code>${log.action}</code></td>
+          <td style="padding:8px; font-family:monospace; font-size:11px">${log.user_id?.substring(0, 8) || '-'}</td>
+          <td style="padding:8px">${log.ip_address || '-'}</td>
+          <td style="padding:8px; max-width:300px; overflow:hidden; text-overflow:ellipsis">${details}</td>
+        </tr>
+      `;
+    });
+
+    html += '</tbody></table>';
+
+    if (logs.length === 0) {
+      html = '<div class="muted">Keine Log-Einträge gefunden</div>';
+    }
+
+    $('#adminAuditList').innerHTML = html;
+
+  } catch (err) {
+    console.error('[ADMIN] Audit log error:', err);
+    $('#adminAuditList').innerHTML = '<div class="muted">Fehler beim Laden des Audit Logs</div>';
+  }
+}
+
+$('#btnAdminAuditRefresh')?.addEventListener('click', loadAdminAudit);
+
+// Initialize admin dashboard when account tab is opened
+function initAdminDashboard() {
+  if (!currentUser || currentUser.role !== 'admin') return;
+
+  // Activate first tab (stats)
+  const firstBtn = $('[data-admin-tab="stats"]');
+  if (firstBtn) {
+    firstBtn.classList.add('primary');
+    $('#admin-stats').style.display = 'block';
+    loadAdminStats();
+  }
+}
+
+// ============================================================================
+// END ADMIN DASHBOARD HANDLERS
+// ============================================================================
+
 /** ----------------------------
  *  Tabs
  *  ---------------------------- */
@@ -3162,7 +4766,10 @@ function switchTab(tab){
   if(tab==='pool'){ renderList(); }
   if(tab==='leitner'){ renderLeitnerStats(); }
   if(tab==='about'){ renderUserStats(); }
-  if(tab==='account'){ renderUserStats(); }
+  if(tab==='account'){
+    renderUserStats();
+    initAdminDashboard();
+  }
   if(tab==='community'){
     if(ENABLE_GAMIFY) renderGamification();
     if(ENABLE_LEADERBOARDS) renderLeaderboards();
@@ -5170,6 +6777,7 @@ async function renderLeitnerStats(){
     </div>
       <div class="muted" style="margin-top:8px">Gesamt: ${total}</div>
     `;
+    renderLeitnerMastery();
   }catch(e){
     $('#leitnerStats').innerHTML = `<div class="muted">–</div>`;
   }
@@ -5179,6 +6787,234 @@ $('#leitnerStats')?.addEventListener('click', (e)=>{
   if(!box) return;
   toggleLeitnerBox(parseInt(box, 10));
 });
+
+// Mastery Progress Visualization
+let LEITNER_MASTERY = { lastPercentage: 0, milestones: [] };
+
+async function renderLeitnerMastery(){
+  const masteryPanel = $('#leitnerMastery');
+  if(!masteryPanel) return;
+
+  if(!currentUser || !ACTIVE_LEITNER_SET?.id){
+    masteryPanel.classList.add('hidden');
+    return;
+  }
+
+  try{
+    const res = await apiFetch(`/leitner/progress/${ACTIVE_LEITNER_SET.id}`);
+    if(!res.ok) throw new Error('Failed to load progress');
+    const data = await res.json();
+
+    const { totalQuestions, masteredCount, masteryPercentage, boxDistribution, stats, milestones } = data;
+
+    if(totalQuestions === 0){
+      masteryPanel.classList.add('hidden');
+      return;
+    }
+
+    masteryPanel.classList.remove('hidden');
+
+    // Update main progress bar
+    $('#masteryPercentage').textContent = `${masteryPercentage}%`;
+    $('#masteryFraction').textContent = `${masteredCount} / ${totalQuestions}`;
+    $('#masteryProgressBar').style.width = `${masteryPercentage}%`;
+
+    // Update mountain bars
+    const maxCount = Math.max(...Object.values(boxDistribution), 1);
+    for(let box = 1; box <= 5; box++){
+      const count = boxDistribution[box] || 0;
+      const percentage = (count / maxCount) * 100;
+      const bar = $(`.mastery-bar[data-box="${box}"]`);
+      const countEl = $(`.mastery-count[data-box="${box}"]`);
+      if(bar) bar.style.width = `${percentage}%`;
+      if(countEl) countEl.textContent = count;
+    }
+
+    // Calculate next milestone
+    const nextMilestone = [25, 50, 75, 100].find(m => masteryPercentage < m) || 100;
+    const nextMilestoneCount = Math.ceil(totalQuestions * nextMilestone / 100);
+    const remaining = nextMilestoneCount - masteredCount;
+    $('#nextMilestone').textContent = `${nextMilestone}%`;
+    $('#milestoneRemaining').textContent = remaining > 0 ? `Noch ${remaining} ${remaining === 1 ? 'Frage' : 'Fragen'}` : 'Erreicht! 🎉';
+
+    // Update stats
+    $('#currentStreak').textContent = stats.current_streak_days || 0;
+    $('#sessionCount').textContent = stats.session_count || 0;
+    $('#totalCorrect').textContent = stats.total_correct || 0;
+    $('#totalWrong').textContent = stats.total_wrong || 0;
+    $('#longestStreak').textContent = `${stats.longest_streak_days || 0} Tage`;
+
+    const totalAnswered = (stats.total_correct || 0) + (stats.total_wrong || 0);
+    const successRate = totalAnswered > 0 ? ((stats.total_correct / totalAnswered) * 100).toFixed(1) : 0;
+    $('#successRate').textContent = `${successRate}%`;
+
+    // Render milestones
+    const milestonesEl = $('#milestonesReached');
+    if(milestonesEl){
+      if(milestones.length === 0){
+        milestonesEl.innerHTML = `<span class="muted" data-i18n="leitner.noMilestones">Noch keine erreicht</span>`;
+      } else {
+        const badges = {
+          25: '🌱 Rookie',
+          50: '📖 Learner',
+          75: '💪 Expert',
+          100: '⭐👑 Master'
+        };
+        milestonesEl.innerHTML = milestones.map(m =>
+          `<span class="pill" style="background:rgba(251,191,36,0.2); color:#fbbf24; border:1px solid rgba(251,191,36,0.3)">${badges[m] || m + '%'}</span>`
+        ).join('');
+      }
+    }
+
+    // Check for new milestone
+    if(LEITNER_MASTERY.lastPercentage < masteryPercentage){
+      await checkLeitnerMilestone(masteryPercentage, totalQuestions, masteredCount);
+    }
+    LEITNER_MASTERY.lastPercentage = masteryPercentage;
+    LEITNER_MASTERY.milestones = milestones;
+
+  }catch(e){
+    console.error('[Leitner Mastery] Render error:', e);
+    masteryPanel.classList.add('hidden');
+  }
+}
+
+async function checkLeitnerMilestone(masteryPercentage, totalQuestions, masteredCount){
+  if(!ACTIVE_LEITNER_SET?.id) return;
+
+  try{
+    const res = await apiFetch('/leitner/check-milestone', {
+      method: 'POST',
+      body: JSON.stringify({
+        setId: ACTIVE_LEITNER_SET.id,
+        masteryPercentage,
+        totalQuestions,
+        masteredCount
+      })
+    });
+
+    if(!res.ok) return;
+    const data = await res.json();
+
+    if(data.milestone && data.new){
+      // Trigger milestone celebration
+      await celebrateMilestone(data.milestone, data.stats);
+    }
+  }catch(e){
+    console.error('[Leitner Milestone] Check error:', e);
+  }
+}
+
+async function celebrateMilestone(milestone, stats){
+  const badges = {
+    25: { emoji: '🌱', name: 'Rookie', color: '#10b981' },
+    50: { emoji: '📖', name: 'Learner', color: '#3b82f6' },
+    75: { emoji: '💪', name: 'Expert', color: '#8b5cf6' },
+    100: { emoji: '⭐👑', name: 'Master', color: '#fbbf24' }
+  };
+
+  const badge = badges[milestone];
+  if(!badge) return;
+
+  // Show confetti
+  if(milestone === 100){
+    triggerConfetti({ duration: 3000, particleCount: 150 });
+  } else {
+    triggerConfetti({ duration: 1500, particleCount: 50 });
+  }
+
+  // Show milestone modal
+  const messages = {
+    25: 'Du hast die ersten 25% gemeistert! 🎉',
+    50: 'Halbzeit! 50% geschafft! 💪',
+    75: 'Nur noch ein Viertel! 75% erreicht! 🔥',
+    100: '🎆 MEISTERSCHAFT! 🎆\n\nDu hast ALLE Fragen gemeistert!'
+  };
+
+  let modalContent = `
+    <div style="text-align:center; padding:20px">
+      <div style="font-size:64px; margin-bottom:16px">${badge.emoji}</div>
+      <h2 style="margin:0 0 8px 0; color:${badge.color}">${badge.name} Badge freigeschaltet!</h2>
+      <p style="font-size:18px; margin:16px 0; white-space:pre-line">${messages[milestone]}</p>
+  `;
+
+  if(milestone === 100 && stats){
+    modalContent += `
+      <div style="margin-top:24px; padding:20px; background:rgba(255,255,255,0.05); border-radius:12px; text-align:left">
+        <h3 style="margin:0 0 12px 0">📊 Deine Statistiken</h3>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; font-size:14px">
+          <div>📅 Dauer: <strong>${stats.daysTaken || 0} Tage</strong></div>
+          <div>🔄 Sessions: <strong>${stats.sessionCount || 0}</strong></div>
+        </div>
+      </div>
+    `;
+  }
+
+  modalContent += `</div>`;
+
+  await showAlert(modalContent, badge.name);
+}
+
+// Simple confetti function
+function triggerConfetti(options = {}){
+  const duration = options.duration || 2000;
+  const particleCount = options.particleCount || 100;
+
+  // Create confetti container
+  const container = document.createElement('div');
+  container.style.cssText = 'position:fixed; inset:0; pointer-events:none; z-index:9999; overflow:hidden';
+  document.body.appendChild(container);
+
+  const colors = ['#fbbf24', '#f97316', '#8b5cf6', '#3b82f6', '#10b981'];
+
+  for(let i = 0; i < particleCount; i++){
+    const particle = document.createElement('div');
+    const size = Math.random() * 8 + 4;
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    const startX = Math.random() * window.innerWidth;
+    const endX = startX + (Math.random() - 0.5) * 200;
+    const rotation = Math.random() * 720 - 360;
+
+    particle.style.cssText = `
+      position:absolute;
+      width:${size}px;
+      height:${size}px;
+      background:${color};
+      border-radius:${Math.random() > 0.5 ? '50%' : '0'};
+      top:-20px;
+      left:${startX}px;
+      opacity:1;
+      transform:rotate(0deg);
+      animation:confettiFall ${duration / 1000}s linear forwards;
+      animation-delay:${Math.random() * 200}ms;
+    `;
+
+    container.appendChild(particle);
+
+    particle.animate([
+      { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
+      { transform: `translateY(${window.innerHeight + 50}px) translateX(${endX - startX}px) rotate(${rotation}deg)`, opacity: 0 }
+    ], {
+      duration,
+      easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+    });
+  }
+
+  setTimeout(() => {
+    container.remove();
+  }, duration + 500);
+}
+
+// Toggle details panel
+$('#btnToggleMasteryDetails')?.addEventListener('click', ()=>{
+  const panel = $('#masteryDetailsPanel');
+  if(panel){
+    const isHidden = panel.classList.contains('hidden');
+    panel.classList.toggle('hidden');
+    $('#btnToggleMasteryDetails').textContent = isHidden ? '📊' : '📊';
+  }
+});
+
 function renderLeitnerQuestion(){
   const q = LEITNER.session[LEITNER.ptr];
   renderQuestionInto($('#leitnerQuestionWrap'), q, 'leitner', {shuffleAnswers:true});
@@ -5515,6 +7351,255 @@ async function importAllPoolsFromFile(inputEl){
     await showAlert("Fehler beim Import: "+e.message, 'Fehler');
   }
 }
+/** ----------------------------
+ *  ADMIN SETTINGS MANAGER
+ *  ---------------------------- */
+let SYSTEM_SETTINGS = {};
+
+async function loadSystemSettings() {
+  if (!isAdmin) return;
+  try {
+    const res = await fetch(`${API_BASE}/admin/settings`, { headers: authHeaders() });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    SYSTEM_SETTINGS = data.settings || {};
+    populateSettingsUI();
+  } catch (e) {
+    console.error('[Settings] Load failed:', e);
+    await showAlert('Einstellungen konnten nicht geladen werden: ' + e.message, 'Fehler');
+  }
+}
+
+function populateSettingsUI() {
+  const auth = SYSTEM_SETTINGS.authentication || {};
+  const modules = SYSTEM_SETTINGS.modules || {};
+  const features = SYSTEM_SETTINGS.features || {};
+  const languages = SYSTEM_SETTINGS.languages || {};
+  const branding = SYSTEM_SETTINGS.branding || {};
+  const pools = SYSTEM_SETTINGS.pools || {};
+  const access = SYSTEM_SETTINGS.access || {};
+
+  // Authentication
+  if ($('#setting-auth-requireLogin')) $('#setting-auth-requireLogin').checked = auth.requireLogin || false;
+  if ($('#setting-auth-allowGuestMode')) $('#setting-auth-allowGuestMode').checked = auth.allowGuestMode !== false;
+  if ($('#setting-auth-adminLoginUrl')) $('#setting-auth-adminLoginUrl').value = auth.adminLoginUrl || '/admin.html';
+
+  // Modules
+  if ($('#setting-modules-training')) $('#setting-modules-training').checked = modules.training !== false;
+  if ($('#setting-modules-swipe')) $('#setting-modules-swipe').checked = modules.swipe !== false;
+  if ($('#setting-modules-exam')) $('#setting-modules-exam').checked = modules.exam !== false;
+  if ($('#setting-modules-leitner')) $('#setting-modules-leitner').checked = modules.leitner !== false;
+  if ($('#setting-modules-community')) $('#setting-modules-community').checked = modules.community !== false;
+
+  // Features
+  if ($('#setting-features-gamification')) $('#setting-features-gamification').checked = features.gamification !== false;
+  if ($('#setting-features-leaderboards')) $('#setting-features-leaderboards').checked = features.leaderboards !== false;
+  if ($('#setting-features-duels')) $('#setting-features-duels').checked = features.duels !== false;
+  if ($('#setting-features-contests')) $('#setting-features-contests').checked = features.contests === true;
+  if ($('#setting-features-fontSizeToggle')) $('#setting-features-fontSizeToggle').checked = features.fontSizeToggle === true;
+
+  // Languages
+  if ($('#setting-lang-de-enabled')) $('#setting-lang-de-enabled').checked = languages.de?.enabled !== false;
+  if ($('#setting-lang-en-enabled')) $('#setting-lang-en-enabled').checked = languages.en?.enabled !== false;
+  if ($('#setting-lang-ru-enabled')) $('#setting-lang-ru-enabled').checked = languages.ru?.enabled !== false;
+  if ($('#setting-lang-de-default')) $('#setting-lang-de-default').checked = languages.de?.default === true;
+  if ($('#setting-lang-en-default')) $('#setting-lang-en-default').checked = languages.en?.default === true;
+  if ($('#setting-lang-ru-default')) $('#setting-lang-ru-default').checked = languages.ru?.default === true;
+
+  // Branding
+  if ($('#setting-branding-appName')) $('#setting-branding-appName').value = branding.appName || 'QuizDojo';
+  if ($('#setting-branding-customFooterText')) $('#setting-branding-customFooterText').value = branding.customFooterText || '';
+  if ($('#setting-branding-showGithubLink')) $('#setting-branding-showGithubLink').checked = branding.showGithubLink !== false;
+
+  // Pools
+  if ($('#setting-pools-autoCreateDefault')) $('#setting-pools-autoCreateDefault').checked = pools.autoCreateDefault !== false;
+  if ($('#setting-pools-allowUserPools')) $('#setting-pools-allowUserPools').checked = pools.allowUserPools !== false;
+  if ($('#setting-pools-requireApproval')) $('#setting-pools-requireApproval').checked = pools.requireApproval === true;
+
+  // Access
+  if ($('#setting-access-poolEditing')) $('#setting-access-poolEditing').value = access.poolEditing || 'owner';
+  if ($('#setting-access-poolCreation')) $('#setting-access-poolCreation').value = access.poolCreation || 'logged_in';
+}
+
+function gatherSettingsFromUI() {
+  const settings = {};
+
+  // Authentication
+  settings.authentication = {
+    requireLogin: $('#setting-auth-requireLogin')?.checked || false,
+    allowGuestMode: $('#setting-auth-allowGuestMode')?.checked || false,
+    adminLoginUrl: $('#setting-auth-adminLoginUrl')?.value || '/admin.html'
+  };
+
+  // Modules
+  settings.modules = {
+    training: $('#setting-modules-training')?.checked || false,
+    swipe: $('#setting-modules-swipe')?.checked || false,
+    exam: $('#setting-modules-exam')?.checked || false,
+    leitner: $('#setting-modules-leitner')?.checked || false,
+    community: $('#setting-modules-community')?.checked || false
+  };
+
+  // Features
+  settings.features = {
+    gamification: $('#setting-features-gamification')?.checked || false,
+    leaderboards: $('#setting-features-leaderboards')?.checked || false,
+    duels: $('#setting-features-duels')?.checked || false,
+    contests: $('#setting-features-contests')?.checked || false,
+    fontSizeToggle: $('#setting-features-fontSizeToggle')?.checked || false
+  };
+
+  // Languages
+  settings.languages = {
+    de: {
+      enabled: $('#setting-lang-de-enabled')?.checked || false,
+      default: $('#setting-lang-de-default')?.checked || false,
+      label: 'Deutsch'
+    },
+    en: {
+      enabled: $('#setting-lang-en-enabled')?.checked || false,
+      default: $('#setting-lang-en-default')?.checked || false,
+      label: 'English'
+    },
+    ru: {
+      enabled: $('#setting-lang-ru-enabled')?.checked || false,
+      default: $('#setting-lang-ru-default')?.checked || false,
+      label: 'Русский'
+    }
+  };
+
+  // Branding
+  settings.branding = {
+    appName: $('#setting-branding-appName')?.value || 'QuizDojo',
+    showGithubLink: $('#setting-branding-showGithubLink')?.checked || false,
+    customFooterText: $('#setting-branding-customFooterText')?.value || ''
+  };
+
+  // Pools
+  settings.pools = {
+    autoCreateDefault: $('#setting-pools-autoCreateDefault')?.checked || false,
+    allowUserPools: $('#setting-pools-allowUserPools')?.checked || false,
+    requireApproval: $('#setting-pools-requireApproval')?.checked || false
+  };
+
+  // Access
+  settings.access = {
+    poolEditing: $('#setting-access-poolEditing')?.value || 'owner',
+    poolCreation: $('#setting-access-poolCreation')?.value || 'logged_in'
+  };
+
+  return settings;
+}
+
+async function saveSystemSettings() {
+  const settings = gatherSettingsFromUI();
+
+  // Client-side validation (failsafe checks)
+  const enabledModules = Object.values(settings.modules).filter(Boolean);
+  if (enabledModules.length === 0) {
+    await showAlert('Mindestens 1 Modul muss aktiv sein!', 'Validierung fehlgeschlagen');
+    return;
+  }
+
+  const enabledLanguages = Object.keys(settings.languages).filter(lang => settings.languages[lang].enabled);
+  if (enabledLanguages.length === 0) {
+    await showAlert('Mindestens 1 Sprache muss aktiv sein!', 'Validierung fehlgeschlagen');
+    return;
+  }
+
+  const defaultLanguages = Object.keys(settings.languages).filter(lang => settings.languages[lang].default);
+  if (defaultLanguages.length !== 1) {
+    await showAlert('Genau 1 Sprache muss als Standard markiert sein!', 'Validierung fehlgeschlagen');
+    return;
+  }
+
+  const defaultLang = defaultLanguages[0];
+  if (!settings.languages[defaultLang].enabled) {
+    await showAlert('Die Standard-Sprache muss aktiviert sein!', 'Validierung fehlgeschlagen');
+    return;
+  }
+
+  try {
+    const msg = $('#settingsMessage');
+    msg.textContent = '💾 Speichere Einstellungen...';
+    msg.className = 'panel';
+    msg.style.background = '#dbeafe';
+    msg.style.color = '#1e40af';
+    msg.hidden = false;
+
+    // Save each category
+    for (const [key, value] of Object.entries(settings)) {
+      const res = await fetch(`${API_BASE}/admin/settings/${key}`, {
+        method: 'PUT',
+        headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+        body: JSON.stringify({ value })
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.message || `HTTP ${res.status}`);
+      }
+    }
+
+    msg.textContent = '✅ Einstellungen erfolgreich gespeichert! Seite wird neu geladen...';
+    msg.style.background = '#d1fae5';
+    msg.style.color = '#065f46';
+
+    // Reload after 2 seconds to apply changes
+    setTimeout(() => window.location.reload(), 2000);
+  } catch (e) {
+    console.error('[Settings] Save failed:', e);
+    const msg = $('#settingsMessage');
+    msg.textContent = '❌ Fehler beim Speichern: ' + e.message;
+    msg.className = 'panel';
+    msg.style.background = '#fee2e2';
+    msg.style.color = '#991b1b';
+    msg.hidden = false;
+  }
+}
+
+async function resetSystemSettings() {
+  const confirmed = await showConfirm(
+    'Alle Einstellungen auf Standard zurücksetzen?\n\nDies setzt alle Werte auf die Werkseinstellungen zurück.',
+    'Einstellungen zurücksetzen'
+  );
+  if (!confirmed) return;
+
+  try {
+    const msg = $('#settingsMessage');
+    msg.textContent = '🔄 Setze Einstellungen zurück...';
+    msg.className = 'panel';
+    msg.style.background = '#dbeafe';
+    msg.style.color = '#1e40af';
+    msg.hidden = false;
+
+    const res = await fetch(`${API_BASE}/admin/settings/reset-all`, {
+      method: 'POST',
+      headers: authHeaders()
+    });
+
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    msg.textContent = '✅ Einstellungen zurückgesetzt! Seite wird neu geladen...';
+    msg.style.background = '#d1fae5';
+    msg.style.color = '#065f46';
+
+    setTimeout(() => window.location.reload(), 2000);
+  } catch (e) {
+    console.error('[Settings] Reset failed:', e);
+    const msg = $('#settingsMessage');
+    msg.textContent = '❌ Fehler beim Zurücksetzen: ' + e.message;
+    msg.className = 'panel';
+    msg.style.background = '#fee2e2';
+    msg.style.color = '#991b1b';
+    msg.hidden = false;
+  }
+}
+
+// Event listeners for settings
+$('#btnSettingsSave')?.addEventListener('click', saveSystemSettings);
+$('#btnSettingsReset')?.addEventListener('click', resetSystemSettings);
+
 /** ----------------------------
  *  Server‑Datensätze (Import)
  *  ---------------------------- */
@@ -6890,6 +8975,10 @@ async function boot(){
   renderDatasetList();
   window.QALists?.init?.();
   await updateApiStatus();
+
+  // Load public settings (guest access control, etc.)
+  await loadPublicSettings();
+
   if(localStorage.getItem('autoLogin') === null){
     localStorage.setItem('autoLogin','1');
   }
@@ -6901,9 +8990,23 @@ async function boot(){
   }
   await refreshMe();
   const params = new URLSearchParams(location.search);
-  showProfileGate(!currentUser || params.get('start') === '1');
+
+  // Determine if gate should be shown
+  const requireLogin = PUBLIC_SETTINGS?.authentication?.requireLogin || false;
+  const forceAdminLogin = params.get('admin') === '1';
+  const shouldShowGate = forceAdminLogin || (requireLogin && !currentUser);
+
+  showProfileGate(shouldShowGate);
+
+  // No guest banner in open-by-default mode
+  // (Guest mode is deprecated - everyone has full access by default)
+
   if(accessToken){
     await postLoginInit();
+  } else if (!requireLogin) {
+    // Open by default: initialize app even without login
+    await loadPools();
+    await ensureDefaultPools();
   }
   const savedTab = localStorage.getItem(TAB_KEY(PROFILE_ID));
   const allowedTabs = Array.from(document.querySelectorAll('button.tabbtn'))

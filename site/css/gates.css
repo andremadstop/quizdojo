@@ -9,7 +9,15 @@
 .gate.active{display:flex}
 body.auth-required #profileGate{display:flex}
 
-.gate .langmenu{position:absolute; top:16px; right:16px; z-index:2}
+/* Theme & Language buttons in top-right corner */
+.gate .control-group{
+  display:flex;
+  gap:6px;
+  align-items:center;
+}
+.gate .langmenu{
+  position:relative;
+}
 .gate .langdrop{right:0; top:40px}
 
 /* Gate Hero Section */
@@ -45,6 +53,9 @@ body.auth-required #profileGate{display:flex}
 .gate-box input{
   width:100%;
   margin-bottom:12px;
+  padding:12px 16px;
+  font-size:16px;
+  border-radius:8px;
 }
 
 .gate-box input:last-of-type{
@@ -96,3 +107,27 @@ body.auth-required #profileGate{display:flex}
 .qa-list .actions{display:flex; gap:8px; flex-wrap:wrap; margin-top:6px}
 .qa-list .titleRow{display:flex; align-items:center; gap:8px; justify-content:space-between}
 .qa-list .count{font-weight:700}
+
+/* Loading Spinner */
+.spinner{
+  width:16px;
+  height:16px;
+  border:2px solid rgba(255,255,255,0.3);
+  border-top-color:#fff;
+  border-radius:50%;
+  animation:spin 0.6s linear infinite;
+}
+
+@keyframes spin{
+  to{transform:rotate(360deg)}
+}
+
+/* Code Input States */
+#gateLoginCode.valid{border-color:#10b981 !important}
+#gateLoginCode.invalid{border-color:#ef4444 !important; animation:shake 0.3s}
+
+@keyframes shake{
+  0%, 100%{transform:translateX(0)}
+  25%{transform:translateX(-8px)}
+  75%{transform:translateX(8px)}
+}

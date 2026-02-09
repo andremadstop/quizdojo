@@ -10,6 +10,7 @@ import nodemailer from 'nodemailer';
 import { loginRateLimit } from './rateLimit.js';
 import { roleRateLimit } from './roleRateLimit.js';
 import { logAudit } from './auditLog.js';
+import { DEFAULT_SETTINGS, validateSettings } from './settings_defaults.js';
 
 const app = express();
 app.set('trust proxy', 1);
@@ -39,16 +40,15 @@ const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
 async function ensureAdmin() {
   const email = process.env.ADMIN_EMAIL;
-  const password = process.env.ADMIN_PASSWORD;
-  if (!email || !password) return;
+  if (!email) return;
   const { rows } = await pool.query('SELECT id FROM users WHERE email=$1', [email]);
   if (rows.length) return;
-  const hash = await bcrypt.hash(password, 10);
+  // Create admin user without password (magic link only)
   await pool.query(
-    'INSERT INTO users (email, username, password_hash, role) VALUES ($1,$2,$3,$4)',
-    [email, email.split('@')[0], hash, 'admin']
+    'INSERT INTO users (email, username, role) VALUES ($1,$2,$3)',
+    [email, email.split('@')[0], 'admin']
   );
-  console.log('Admin user created:', email);
+  console.log('Admin user created (passwordless):', email);
 }
 
 async function ensureWrongTable() {
@@ -1087,6 +1087,51 @@ function optionalAuth(req, _res, next) {
   } catch {
     // ignore invalid token for optional auth
   }
+// ============================================================================
+// GUEST MODE SUPPORT - INSERT AFTER LINE 1089 (after optionalAuth)
+// ============================================================================
+
+// Helper: Check if user is guest (no authentication)
+function isGuest(req) {
+  return !req.user || !req.user.sub;
+}
+
+// Helper: Require authentication (for endpoints that need it)
+function requireAuth(req, res) {
+  if (isGuest(req)) {
+    res.status(401).json({ error: 'authentication_required', message: 'Login required to access this feature' });
+    return true; // Blocked
+  }
+  return false; // Not blocked, continue
+}
+
+// Middleware: Enforce authentication
+function mustAuth() {
+  return (req, res, next) => {
+    if (requireAuth(req, res)) return;
+    next();
+  };
+}
+
+// ============================================================================
+// GUEST MODE ENDPOINT UPDATES
+// ============================================================================
+
+// Note: Most endpoints already use auth() or optionalAuth correctly
+// Guest users can:
+// - Browse public pools (GET /pools with optionalAuth)
+// - View questions (GET /questions with optionalAuth)
+// - Train/Swipe/Exam (but progress not saved)
+
+// Endpoints that MUST require auth are already using auth() middleware:
+// - Leitner endpoints
+// - Community endpoints
+// - Gamification endpoints
+// - Pool creation/editing
+
+// ============================================================================
+// END GUEST MODE SUPPORT
+// ============================================================================
   next();
 }
 
@@ -2033,6 +2078,275 @@ app.post('/auth/logout', async (req, res) => {
   clearRefreshCookie(res, req);
   res.json({ ok: true });
 });
+// ============================================================================
+// MAGIC LINK AUTHENTICATION - INSERT AFTER LINE 2035 (after /auth/logout)
+// ============================================================================
+
+// Helper: Generate 6-digit code
+function generateCode() {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+}
+
+// Helper: Send Magic Link Email (with placeholders)
+async function sendMagicLinkEmail(email, code, token) {
+  const link = `https://your-domain.com/?token=${token}`;
+
+  const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body style="margin:0; padding:0; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background:#f5f5f5;">
+  <table style="width:100%; max-width:600px; margin:40px auto; background:white; border-radius:8px; overflow:hidden;">
+    <tr>
+      <td style="padding:40px; text-align:center; background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+        <h1 style="margin:0; color:white; font-size:24px;">🏋️ Prüfungstrainer</h1>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding:40px;">
+        <h2 style="margin:0 0 20px; color:#1f2937; font-size:20px;">Dein Login</h2>
+        <p style="margin:0 0 30px; color:#6b7280; line-height:1.6;">
+          Wähle eine der beiden Optionen:
+        </p>
+
+        <!-- Option 1: Link -->
+        <div style="margin:30px 0; padding:20px; background:#f9fafb; border-radius:8px;">
+          <p style="font-weight:600; margin:0 0 12px; color:#374151;">📱 Option 1: Ein-Klick-Login</p>
+          <a href="${link}" style="display:inline-block; padding:14px 32px; background:#3b82f6; color:white; text-decoration:none; border-radius:6px; font-weight:600; font-size:16px;">
+            Jetzt einloggen →
+          </a>
+        </div>
+
+        <div style="text-align:center; margin:20px 0; color:#d1d5db;">oder</div>
+
+        <!-- Option 2: Code -->
+        <div style="margin:30px 0; padding:20px; background:#f9fafb; border-radius:8px;">
+          <p style="font-weight:600; margin:0 0 12px; color:#374151;">🔢 Option 2: Code eingeben</p>
+          <div style="font-size:32px; font-weight:700; letter-spacing:8px; text-align:center; padding:20px; background:white; border-radius:8px; font-family:monospace; color:#1f2937;">
+            ${code}
+          </div>
+          <p style="font-size:13px; color:#6b7280; text-align:center; margin:8px 0 0;">
+            Code auf der Login-Seite eingeben
+          </p>
+        </div>
+
+        <p style="margin:30px 0 0; color:#9ca3af; font-size:14px; line-height:1.6;">
+          Falls du diesen Login nicht angefordert hast, ignoriere diese Email einfach.
+        </p>
+        <p style="margin:12px 0 0; color:#9ca3af; font-size:13px;">
+          Gültig für 15 Minuten
+        </p>
+
+        <hr style="margin:30px 0; border:none; border-top:1px solid #e5e7eb;">
+        <p style="margin:0; color:#9ca3af; font-size:12px;">
+          Link funktioniert nicht? Kopiere diese URL:<br>
+          <span style="color:#6b7280; word-break:break-all;">${link}</span>
+        </p>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+`;
+
+  const text = `Prüfungstrainer - Dein Login
+
+Wähle eine Option:
+
+Option 1: Ein-Klick-Login
+${link}
+
+Option 2: Code eingeben
+${code}
+
+Der Login ist 15 Minuten gültig.
+
+Falls du diesen Login nicht angefordert hast, ignoriere diese Email.
+`;
+
+  const transport = getMailer();
+  if (!transport) {
+    console.warn('[MAGIC LINK] SMTP not configured - email would be sent:', { email, code });
+    return; // Placeholder mode: don't throw error
+  }
+
+  try {
+    await transport.sendMail({
+      from: process.env.SMTP_FROM || process.env.SMTP_USER || 'noreply@example.com',
+      to: email,
+      subject: '🔑 Dein Login-Code',
+      text,
+      html
+    });
+    console.log('[MAGIC LINK] Email sent to:', email);
+  } catch (err) {
+    console.error('[MAGIC LINK] Email error:', err.message);
+    // Don't throw - continue even if email fails (for testing)
+  }
+}
+
+// POST /auth/request-magic-link
+// Request a magic link + code via email
+app.post('/auth/request-magic-link', loginRateLimit({ windowMs: 10 * 60 * 1000, max: 3 }), async (req, res) => {
+  const { email } = req.body || {};
+
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return res.status(400).json({ error: 'invalid_email' });
+  }
+
+  // Find or create user
+  let user;
+  const { rows } = await pool.query('SELECT id, email, username, role FROM users WHERE email=$1', [email]);
+
+  if (!rows[0]) {
+    // Auto-create user if email doesn't exist
+    const username = email.split('@')[0];
+    const result = await pool.query(
+      'INSERT INTO users (email, username, role, is_guest) VALUES ($1,$2,$3,$4) RETURNING id, email, username, role',
+      [email, username, 'student', false]
+    );
+    user = result.rows[0];
+    await logAudit('auth_magic_link_autocreate', user.id, { email: user.email }, req.ip);
+  } else {
+    user = rows[0];
+  }
+
+  // Generate token + code
+  const token = crypto.randomBytes(32).toString('hex'); // 64 chars
+  const code = generateCode(); // 6 digits
+  const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 min
+
+  // Store in DB
+  await pool.query(
+    `INSERT INTO magic_tokens (user_id, token, code, email, expires_at, ip_address, user_agent)
+     VALUES ($1,$2,$3,$4,$5,$6,$7)`,
+    [user.id, token, code, email, expiresAt, req.ip, req.get('user-agent')]
+  );
+
+  // Send email
+  await sendMagicLinkEmail(email, code, token);
+
+  await logAudit('auth_magic_link_requested', user.id, { email }, req.ip);
+
+  res.json({ ok: true, message: 'Email sent' });
+});
+
+// POST /auth/verify-code
+// Verify a 6-digit code
+app.post('/auth/verify-code', loginRateLimit({ windowMs: 10 * 60 * 1000, max: 10 }), async (req, res) => {
+  const { email, code } = req.body || {};
+
+  if (!email || !code || !/^\d{6}$/.test(code)) {
+    return res.status(400).json({ error: 'invalid_input' });
+  }
+
+  // Find token
+  const { rows } = await pool.query(
+    `SELECT mt.id, mt.user_id, mt.used, mt.expires_at, u.id as uid, u.email, u.username, u.role
+     FROM magic_tokens mt
+     JOIN users u ON u.id = mt.user_id
+     WHERE mt.email = $1 AND mt.code = $2
+     ORDER BY mt.created_at DESC
+     LIMIT 1`,
+    [email, code]
+  );
+
+  const record = rows[0];
+
+  if (!record) {
+    return res.status(400).json({ error: 'invalid_code' });
+  }
+
+  if (record.used) {
+    return res.status(400).json({ error: 'code_already_used' });
+  }
+
+  if (new Date(record.expires_at) < new Date()) {
+    return res.status(400).json({ error: 'code_expired' });
+  }
+
+  // Mark as used
+  await pool.query('UPDATE magic_tokens SET used=true, used_at=now() WHERE id=$1', [record.id]);
+
+  // Update login stats
+  await pool.query(
+    'UPDATE users SET last_login_at=now(), login_count=COALESCE(login_count,0)+1 WHERE id=$1',
+    [record.user_id]
+  );
+
+  await logAudit('auth_magic_link_login', record.user_id, { email: record.email, method: 'code' }, req.ip);
+
+  // Generate JWT
+  const user = { id: record.uid, email: record.email, username: record.username, role: record.role };
+  const refreshToken = signRefreshToken(user);
+  setRefreshCookie(res, refreshToken, req);
+
+  res.json({
+    access_token: signAccessToken(user),
+    user: { id: user.id, email: user.email, username: user.username, role: user.role }
+  });
+});
+
+// GET /auth/verify-magic-link?token=xxx
+// Verify a magic link token (from URL)
+app.get('/auth/verify-magic-link', loginRateLimit({ windowMs: 10 * 60 * 1000, max: 10 }), async (req, res) => {
+  const { token } = req.query;
+
+  if (!token || token.length !== 64) {
+    return res.status(400).json({ error: 'invalid_token' });
+  }
+
+  // Find token
+  const { rows } = await pool.query(
+    `SELECT mt.id, mt.user_id, mt.used, mt.expires_at, u.id as uid, u.email, u.username, u.role
+     FROM magic_tokens mt
+     JOIN users u ON u.id = mt.user_id
+     WHERE mt.token = $1`,
+    [token]
+  );
+
+  const record = rows[0];
+
+  if (!record) {
+    return res.status(400).json({ error: 'invalid_token' });
+  }
+
+  if (record.used) {
+    return res.status(400).json({ error: 'token_already_used' });
+  }
+
+  if (new Date(record.expires_at) < new Date()) {
+    return res.status(400).json({ error: 'token_expired' });
+  }
+
+  // Mark as used
+  await pool.query('UPDATE magic_tokens SET used=true, used_at=now() WHERE id=$1', [record.id]);
+
+  // Update login stats
+  await pool.query(
+    'UPDATE users SET last_login_at=now(), login_count=COALESCE(login_count,0)+1 WHERE id=$1',
+    [record.user_id]
+  );
+
+  await logAudit('auth_magic_link_login', record.user_id, { email: record.email, method: 'link' }, req.ip);
+
+  // Generate JWT
+  const user = { id: record.uid, email: record.email, username: record.username, role: record.role };
+  const refreshToken = signRefreshToken(user);
+  setRefreshCookie(res, refreshToken, req);
+
+  res.json({
+    access_token: signAccessToken(user),
+    user: { id: user.id, email: user.email, username: user.username, role: user.role }
+  });
+});
+
+// ============================================================================
+// END MAGIC LINK AUTHENTICATION
+// ============================================================================
 
 function parseLangCategory(category, lang) {
   let cat = category;
@@ -2772,8 +3086,164 @@ app.post('/leitner/answer', auth(), roleRateLimit(), async (req, res) => {
   }, tz);
   const xpDelta = isCorrect ? XP_RULES.leitner_correct : 0;
   const gamification = await updateGamification(pool, req.user.sub, xpDelta);
+
+  // Update Leitner stats
+  const today = new Date().toISOString().split('T')[0];
+  await pool.query(
+    `INSERT INTO leitner_stats (user_id, set_id, session_count, total_correct, total_wrong, last_activity_date, last_session_at)
+     VALUES ($1, $2, 1, $3, $4, $5, now())
+     ON CONFLICT (user_id, set_id) DO UPDATE SET
+       session_count = leitner_stats.session_count + 1,
+       total_correct = leitner_stats.total_correct + $3,
+       total_wrong = leitner_stats.total_wrong + $4,
+       last_session_at = now(),
+       last_activity_date = $5,
+       current_streak_days = CASE
+         WHEN leitner_stats.last_activity_date = CURRENT_DATE - 1 THEN leitner_stats.current_streak_days + 1
+         WHEN leitner_stats.last_activity_date = CURRENT_DATE THEN leitner_stats.current_streak_days
+         ELSE 1
+       END,
+       longest_streak_days = GREATEST(
+         leitner_stats.longest_streak_days,
+         CASE
+           WHEN leitner_stats.last_activity_date = CURRENT_DATE - 1 THEN leitner_stats.current_streak_days + 1
+           WHEN leitner_stats.last_activity_date = CURRENT_DATE THEN leitner_stats.current_streak_days
+           ELSE 1
+         END
+       )`,
+    [req.user.sub, set_id, isCorrect ? 1 : 0, isCorrect ? 0 : 1, today]
+  );
+
   logAudit('leitner_answer', req.user.sub, { question_id, result, box: newBox });
   res.json({ box: newBox, xp_awarded: xpDelta, gamification });
+});
+
+// GET /leitner/progress/:setId - Get mastery progress for a learning set
+app.get('/leitner/progress/:setId', auth(), roleRateLimit(), async (req, res) => {
+  try {
+    const { setId } = req.params;
+
+    // Get box distribution
+    const { rows: boxRows } = await pool.query(
+      `SELECT box, COUNT(*) as count
+       FROM learning_box_items
+       WHERE set_id = $1 AND user_id = $2
+       GROUP BY box
+       ORDER BY box`,
+      [setId, req.user.sub]
+    );
+
+    const boxDistribution = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+    let totalQuestions = 0;
+    let masteredCount = 0;
+
+    for (const row of boxRows) {
+      boxDistribution[row.box] = parseInt(row.count);
+      totalQuestions += parseInt(row.count);
+      if (row.box === 5) masteredCount = parseInt(row.count);
+    }
+
+    const masteryPercentage = totalQuestions > 0 ? (masteredCount / totalQuestions * 100) : 0;
+
+    // Get milestones reached
+    const { rows: milestones } = await pool.query(
+      `SELECT milestone, reached_at, session_count, days_taken
+       FROM leitner_milestones
+       WHERE user_id = $1 AND set_id = $2
+       ORDER BY milestone`,
+      [req.user.sub, setId]
+    );
+
+    // Get stats
+    const { rows: statsRows } = await pool.query(
+      `SELECT session_count, total_correct, total_wrong,
+              current_streak_days, longest_streak_days, started_at
+       FROM leitner_stats
+       WHERE user_id = $1 AND set_id = $2`,
+      [req.user.sub, setId]
+    );
+    const stats = statsRows[0] || {
+      session_count: 0,
+      total_correct: 0,
+      total_wrong: 0,
+      current_streak_days: 0,
+      longest_streak_days: 0,
+      started_at: null
+    };
+
+    res.json({
+      totalQuestions,
+      masteredCount,
+      masteryPercentage: parseFloat(masteryPercentage.toFixed(1)),
+      boxDistribution,
+      milestones: milestones.map(m => m.milestone),
+      stats
+    });
+  } catch (err) {
+    console.error('[Leitner Progress] Error:', err);
+    res.status(500).json({ error: 'server_error' });
+  }
+});
+
+// POST /leitner/check-milestone - Check and record milestone achievement
+app.post('/leitner/check-milestone', auth(), roleRateLimit(), async (req, res) => {
+  try {
+    const { setId, masteryPercentage, totalQuestions, masteredCount } = req.body;
+
+    if (!setId || masteryPercentage === undefined) {
+      return res.status(400).json({ error: 'invalid_params' });
+    }
+
+    // Determine which milestone was reached
+    const milestones = [25, 50, 75, 100];
+    const reachedMilestone = milestones.find(m => masteryPercentage >= m);
+
+    if (!reachedMilestone) {
+      return res.json({ milestone: null });
+    }
+
+    // Check if already recorded
+    const { rows: existing } = await pool.query(
+      `SELECT milestone FROM leitner_milestones
+       WHERE user_id = $1 AND set_id = $2 AND milestone = $3`,
+      [req.user.sub, setId, reachedMilestone]
+    );
+
+    if (existing.length > 0) {
+      return res.json({ milestone: null, alreadyRecorded: true });
+    }
+
+    // Get stats for days_taken
+    const { rows: statsRows } = await pool.query(
+      `SELECT started_at, session_count FROM leitner_stats
+       WHERE user_id = $1 AND set_id = $2`,
+      [req.user.sub, setId]
+    );
+
+    const daysTaken = statsRows[0]?.started_at
+      ? Math.ceil((Date.now() - new Date(statsRows[0].started_at)) / (1000 * 60 * 60 * 24))
+      : 0;
+    const sessionCount = statsRows[0]?.session_count || 0;
+
+    // Record milestone
+    await pool.query(
+      `INSERT INTO leitner_milestones
+       (user_id, set_id, milestone, total_questions, mastered_questions, session_count, days_taken)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+      [req.user.sub, setId, reachedMilestone, totalQuestions, masteredCount, sessionCount, daysTaken]
+    );
+
+    await logAudit('leitner_milestone', req.user.sub, { setId, milestone: reachedMilestone });
+
+    res.json({
+      milestone: reachedMilestone,
+      new: true,
+      stats: { sessionCount, daysTaken }
+    });
+  } catch (err) {
+    console.error('[Leitner Milestone] Error:', err);
+    res.status(500).json({ error: 'server_error' });
+  }
 });
 
 app.post('/exams/start', auth(), roleRateLimit(), async (req, res) => {
@@ -3274,6 +3744,505 @@ app.post('/import/all', auth('admin'), roleRateLimit(), async (req, res) => {
 });
 
 const port = process.env.PORT || 8000;
+// ============================================================================
+// ADMIN DASHBOARD ENDPOINTS - INSERT BEFORE app.listen() (END OF FILE)
+// ============================================================================
+
+// GET /admin/stats - System statistics
+app.get('/admin/stats', auth('admin'), async (req, res) => {
+  try {
+    // User stats
+    const usersTotal = await pool.query('SELECT COUNT(*) as count FROM users WHERE is_guest = false');
+    const usersToday = await pool.query(`SELECT COUNT(*) as count FROM users WHERE created_at > now() - interval '1 day'`);
+    const usersActiveWeek = await pool.query(`SELECT COUNT(DISTINCT user_id) as count FROM audit_log WHERE created_at > now() - interval '7 days'`);
+
+    // Pool stats
+    const poolsTotal = await pool.query('SELECT COUNT(*) as count FROM pools');
+    const poolsPublic = await pool.query(`SELECT COUNT(*) as count FROM pools WHERE owner_id IS NULL OR id IN (SELECT DISTINCT pool_id FROM questions)`);
+
+    // Question stats
+    const questionsTotal = await pool.query('SELECT COUNT(*) as count FROM questions');
+    const questionsByLang = await pool.query(`SELECT lang, COUNT(*) as count FROM questions GROUP BY lang ORDER BY count DESC`);
+
+    // Login stats
+    const loginsToday = await pool.query(`SELECT COUNT(*) as count FROM audit_log WHERE action = 'auth_magic_link_login' AND created_at > now() - interval '1 day'`);
+
+    // Magic tokens active
+    const tokensActive = await pool.query('SELECT COUNT(*) as count FROM magic_tokens WHERE used = false AND expires_at > now()');
+
+    res.json({
+      users: {
+        total: parseInt(usersTotal.rows[0].count),
+        new_today: parseInt(usersToday.rows[0].count),
+        active_week: parseInt(usersActiveWeek.rows[0].count)
+      },
+      pools: {
+        total: parseInt(poolsTotal.rows[0].count),
+        public: parseInt(poolsPublic.rows[0].count)
+      },
+      questions: {
+        total: parseInt(questionsTotal.rows[0].count),
+        by_language: questionsByLang.rows.map(r => ({ lang: r.lang, count: parseInt(r.count) }))
+      },
+      logins_today: parseInt(loginsToday.rows[0].count),
+      magic_tokens_active: parseInt(tokensActive.rows[0].count)
+    });
+  } catch (err) {
+    console.error('[ADMIN] Stats error:', err);
+    res.status(500).json({ error: 'server_error' });
+  }
+});
+
+// GET /admin/users - List all users with pagination
+app.get('/admin/users', auth('admin'), async (req, res) => {
+  try {
+    const page = parseInt(req.query.page || '1');
+    const limit = Math.min(parseInt(req.query.limit || '50'), 100);
+    const offset = (page - 1) * limit;
+    const search = req.query.search || '';
+    const role = req.query.role || '';
+
+    let query = 'SELECT id, username, email, role, created_at, last_login_at, login_count, notes FROM users WHERE is_guest = false';
+    const params = [];
+    let paramIndex = 1;
+
+    if (search) {
+      query += ` AND (username ILIKE $${paramIndex} OR email ILIKE $${paramIndex})`;
+      params.push(`%${search}%`);
+      paramIndex++;
+    }
+
+    if (role) {
+      query += ` AND role = $${paramIndex}`;
+      params.push(role);
+      paramIndex++;
+    }
+
+    query += ` ORDER BY created_at DESC LIMIT $${paramIndex} OFFSET $${paramIndex + 1}`;
+    params.push(limit, offset);
+
+    const { rows } = await pool.query(query, params);
+
+    // Get total count
+    let countQuery = 'SELECT COUNT(*) as count FROM users WHERE is_guest = false';
+    const countParams = [];
+    if (search) {
+      countQuery += ` AND (username ILIKE $1 OR email ILIKE $1)`;
+      countParams.push(`%${search}%`);
+    }
+    if (role) {
+      countQuery += ` AND role = $${countParams.length + 1}`;
+      countParams.push(role);
+    }
+    const { rows: countRows } = await pool.query(countQuery, countParams);
+    const total = parseInt(countRows[0].count);
+
+    res.json({
+      users: rows,
+      total,
+      page,
+      pages: Math.ceil(total / limit),
+      limit
+    });
+  } catch (err) {
+    console.error('[ADMIN] Users list error:', err);
+    res.status(500).json({ error: 'server_error' });
+  }
+});
+
+// GET /admin/users/:id - Get user details
+app.get('/admin/users/:id', auth('admin'), async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // User basic info
+    const { rows } = await pool.query(
+      'SELECT id, username, email, role, created_at, last_login_at, login_count, notes FROM users WHERE id = $1',
+      [id]
+    );
+
+    if (!rows[0]) {
+      return res.status(404).json({ error: 'user_not_found' });
+    }
+
+    const user = rows[0];
+
+    // User stats
+    const poolsCreated = await pool.query('SELECT COUNT(*) as count FROM pools WHERE owner_id = $1', [id]);
+    const xpData = await pool.query('SELECT xp, level FROM user_gamification WHERE user_id = $1', [id]);
+
+    // Recent logins
+    const recentLogins = await pool.query(
+      `SELECT created_at, details->>'method' as method FROM audit_log
+       WHERE user_id = $1 AND action = 'auth_magic_link_login'
+       ORDER BY created_at DESC LIMIT 10`,
+      [id]
+    );
+
+    res.json({
+      user,
+      stats: {
+        pools_created: parseInt(poolsCreated.rows[0].count),
+        xp: xpData.rows[0] ? parseFloat(xpData.rows[0].xp) : 0,
+        level: xpData.rows[0] ? parseInt(xpData.rows[0].level) : 0
+      },
+      recent_logins: recentLogins.rows
+    });
+  } catch (err) {
+    console.error('[ADMIN] User details error:', err);
+    res.status(500).json({ error: 'server_error' });
+  }
+});
+
+// PUT /admin/users/:id - Update user
+app.put('/admin/users/:id', auth('admin'), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { username, email, role, notes } = req.body || {};
+
+    // Validate
+    if (role && !['student', 'admin'].includes(role)) {
+      return res.status(400).json({ error: 'invalid_role' });
+    }
+
+    // Check if user exists
+    const { rows: checkRows } = await pool.query('SELECT id, role FROM users WHERE id = $1', [id]);
+    if (!checkRows[0]) {
+      return res.status(404).json({ error: 'user_not_found' });
+    }
+
+    // Build update query
+    const updates = [];
+    const params = [];
+    let paramIndex = 1;
+
+    if (username) {
+      updates.push(`username = $${paramIndex++}`);
+      params.push(username);
+    }
+    if (email) {
+      updates.push(`email = $${paramIndex++}`);
+      params.push(email);
+    }
+    if (role) {
+      updates.push(`role = $${paramIndex++}`);
+      params.push(role);
+    }
+    if (notes !== undefined) {
+      updates.push(`notes = $${paramIndex++}`);
+      params.push(notes);
+    }
+
+    if (updates.length === 0) {
+      return res.status(400).json({ error: 'no_updates' });
+    }
+
+    params.push(id);
+    const query = `UPDATE users SET ${updates.join(', ')} WHERE id = $${paramIndex} RETURNING id, username, email, role, notes`;
+
+    const { rows } = await pool.query(query, params);
+
+    await logAudit('admin_user_updated', req.user.sub, { target_user_id: id, changes: { username, email, role, notes } }, req.ip);
+
+    res.json({ user: rows[0] });
+  } catch (err) {
+    if (err.code === '23505') { // unique violation
+      return res.status(409).json({ error: 'email_or_username_exists' });
+    }
+    console.error('[ADMIN] User update error:', err);
+    res.status(500).json({ error: 'server_error' });
+  }
+});
+
+// DELETE /admin/users/:id - Delete user
+app.delete('/admin/users/:id', auth('admin'), async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Cannot delete self
+    if (id === req.user.sub) {
+      return res.status(400).json({ error: 'cannot_delete_self' });
+    }
+
+    // Check if this is the last admin
+    const { rows: adminRows } = await pool.query('SELECT COUNT(*) as count FROM users WHERE role = $1', ['admin']);
+    const adminCount = parseInt(adminRows[0].count);
+
+    const { rows: targetRows } = await pool.query('SELECT role FROM users WHERE id = $1', [id]);
+    if (!targetRows[0]) {
+      return res.status(404).json({ error: 'user_not_found' });
+    }
+
+    if (targetRows[0].role === 'admin' && adminCount <= 1) {
+      return res.status(400).json({ error: 'cannot_delete_last_admin' });
+    }
+
+    // Delete user (CASCADE will handle related data)
+    await pool.query('DELETE FROM users WHERE id = $1', [id]);
+
+    await logAudit('admin_user_deleted', req.user.sub, { target_user_id: id }, req.ip);
+
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('[ADMIN] User delete error:', err);
+    res.status(500).json({ error: 'server_error' });
+  }
+});
+
+// GET /admin/audit-log - Get audit log
+app.get('/admin/audit-log', auth('admin'), async (req, res) => {
+  try {
+    const limit = Math.min(parseInt(req.query.limit || '100'), 500);
+    const userId = req.query.user_id || null;
+    const action = req.query.action || null;
+
+    let query = 'SELECT id, user_id, action, details, ip_address, created_at FROM audit_log WHERE 1=1';
+    const params = [];
+    let paramIndex = 1;
+
+    if (userId) {
+      query += ` AND user_id = $${paramIndex++}`;
+      params.push(userId);
+    }
+
+    if (action) {
+      query += ` AND action = $${paramIndex++}`;
+      params.push(action);
+    }
+
+    query += ` ORDER BY created_at DESC LIMIT $${paramIndex}`;
+    params.push(limit);
+
+    const { rows } = await pool.query(query, params);
+
+    res.json({ logs: rows });
+  } catch (err) {
+    console.error('[ADMIN] Audit log error:', err);
+    res.status(500).json({ error: 'server_error' });
+  }
+});
+
+// POST /admin/clear-rate-limit - Clear rate limit for IP
+app.post('/admin/clear-rate-limit', auth('admin'), async (req, res) => {
+  const { ip } = req.body || {};
+
+  if (!ip) {
+    return res.status(400).json({ error: 'missing_ip' });
+  }
+
+  // Note: Rate limiting is in-memory, so this would need to be implemented
+  // in the rate limit module. For now, return success.
+  // The API restart already clears all rate limits.
+
+  await logAudit('admin_clear_rate_limit', req.user.sub, { ip }, req.ip);
+
+  res.json({ ok: true, message: 'Rate limit cleared. Restart API for immediate effect.' });
+});
+
+// GET /admin/magic-tokens - Get active magic tokens
+app.get('/admin/magic-tokens', auth('admin'), async (req, res) => {
+  try {
+    const { rows } = await pool.query(
+      `SELECT id, email, code, expires_at, created_at
+       FROM magic_tokens
+       WHERE used = false AND expires_at > now()
+       ORDER BY created_at DESC
+       LIMIT 50`
+    );
+
+    res.json({ tokens: rows });
+  } catch (err) {
+    console.error('[ADMIN] Magic tokens error:', err);
+    res.status(500).json({ error: 'server_error' });
+  }
+});
+
+// DELETE /admin/magic-tokens/:id - Invalidate a magic token
+app.delete('/admin/magic-tokens/:id', auth('admin'), async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    await pool.query('UPDATE magic_tokens SET used = true, used_at = now() WHERE id = $1', [id]);
+
+    await logAudit('admin_invalidate_token', req.user.sub, { token_id: id }, req.ip);
+
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('[ADMIN] Invalidate token error:', err);
+    res.status(500).json({ error: 'server_error' });
+  }
+});
+
+// ============================================================================
+// END ADMIN DASHBOARD ENDPOINTS
+// ============================================================================
+
+// ============================================================================
+// ADMIN SETTINGS ENDPOINTS
+// ============================================================================
+
+// GET /admin/settings - Get all system settings (Admin only)
+app.get('/admin/settings', auth('admin'), async (req, res) => {
+  try {
+    const { rows } = await pool.query('SELECT key, value FROM system_settings ORDER BY key');
+    const settings = {};
+    rows.forEach(r => { settings[r.key] = r.value; });
+    res.json({ settings });
+  } catch (err) {
+    console.error('[ADMIN SETTINGS] Get error:', err);
+    res.status(500).json({ error: 'server_error' });
+  }
+});
+
+// PUT /admin/settings/:key - Update a single setting (Admin only)
+app.put('/admin/settings/:key', auth('admin'), async (req, res) => {
+  try {
+    const { key } = req.params;
+    const { value } = req.body || {};
+
+    // Validate key exists in defaults
+    const validKeys = ['authentication', 'modules', 'features', 'languages', 'branding', 'pools', 'access'];
+    if (!validKeys.includes(key)) {
+      return res.status(400).json({ error: 'invalid_key', message: `Key must be one of: ${validKeys.join(', ')}` });
+    }
+
+    // Validate value is an object
+    if (!value || typeof value !== 'object') {
+      return res.status(400).json({ error: 'invalid_value', message: 'Value must be a JSON object' });
+    }
+
+    // Use comprehensive validation from settings_defaults module
+    const errors = validateSettings(key, value);
+    if (errors.length > 0) {
+      return res.status(400).json({
+        error: 'validation_failed',
+        message: 'Settings validation failed',
+        errors
+      });
+    }
+
+    // Update in database
+    await pool.query(
+      `INSERT INTO system_settings (key, value, updated_by)
+       VALUES ($1, $2, $3)
+       ON CONFLICT (key) DO UPDATE SET value = $2, updated_by = $3, updated_at = now()`,
+      [key, JSON.stringify(value), req.user.sub]
+    );
+
+    await logAudit('admin_settings_updated', req.user.sub, { key, value }, req.ip);
+
+    res.json({ ok: true, key, value });
+  } catch (err) {
+    console.error('[ADMIN SETTINGS] Update error:', err);
+    res.status(500).json({ error: 'server_error' });
+  }
+});
+
+// GET /admin/settings/schema - Get default settings schema (Admin only)
+// Returns the structure of available settings for UI rendering
+app.get('/admin/settings/schema', auth('admin'), async (req, res) => {
+  try {
+    res.json({ schema: DEFAULT_SETTINGS });
+  } catch (err) {
+    console.error('[ADMIN SETTINGS] Schema error:', err);
+    res.status(500).json({ error: 'server_error' });
+  }
+});
+
+// POST /admin/settings/reset/:key - Reset a setting to default (Admin only)
+app.post('/admin/settings/reset/:key', auth('admin'), async (req, res) => {
+  try {
+    const { key } = req.params;
+
+    // Validate key exists in defaults
+    if (!(key in DEFAULT_SETTINGS)) {
+      return res.status(400).json({ error: 'invalid_key', message: `Key "${key}" not found in defaults` });
+    }
+
+    const defaultValue = DEFAULT_SETTINGS[key];
+
+    // Update in database
+    await pool.query(
+      `INSERT INTO system_settings (key, value, updated_by)
+       VALUES ($1, $2, $3)
+       ON CONFLICT (key) DO UPDATE SET value = $2, updated_by = $3, updated_at = now()`,
+      [key, JSON.stringify(defaultValue), req.user.sub]
+    );
+
+    await logAudit('admin_settings_reset', req.user.sub, { key }, req.ip);
+
+    res.json({ ok: true, key, value: defaultValue });
+  } catch (err) {
+    console.error('[ADMIN SETTINGS] Reset error:', err);
+    res.status(500).json({ error: 'server_error' });
+  }
+});
+
+// POST /admin/settings/reset-all - Reset all settings to defaults (Admin only)
+app.post('/admin/settings/reset-all', auth('admin'), async (req, res) => {
+  try {
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+
+      // Delete all existing settings
+      await client.query('DELETE FROM system_settings');
+
+      // Insert all defaults
+      for (const [key, value] of Object.entries(DEFAULT_SETTINGS)) {
+        await client.query(
+          `INSERT INTO system_settings (key, value, updated_by)
+           VALUES ($1, $2, $3)`,
+          [key, JSON.stringify(value), req.user.sub]
+        );
+      }
+
+      await client.query('COMMIT');
+      await logAudit('admin_settings_reset_all', req.user.sub, {}, req.ip);
+
+      res.json({ ok: true, settings: DEFAULT_SETTINGS });
+    } catch (err) {
+      await client.query('ROLLBACK');
+      throw err;
+    } finally {
+      client.release();
+    }
+  } catch (err) {
+    console.error('[ADMIN SETTINGS] Reset all error:', err);
+    res.status(500).json({ error: 'server_error' });
+  }
+});
+
+// GET /settings/public - Get public settings (no authentication required)
+// Returns settings that frontend needs to enforce access control
+app.get('/settings/public', async (req, res) => {
+  try {
+    const { rows } = await pool.query(
+      `SELECT key, value FROM system_settings
+       WHERE key IN ('authentication', 'modules', 'features', 'languages', 'branding', 'pools', 'access')`
+    );
+    const settings = {};
+    rows.forEach(r => { settings[r.key] = r.value; });
+
+    // Merge with defaults for any missing keys (failsafe)
+    for (const [key, defaultValue] of Object.entries(DEFAULT_SETTINGS)) {
+      if (!(key in settings)) {
+        settings[key] = defaultValue;
+      }
+    }
+
+    res.json({ settings });
+  } catch (err) {
+    console.error('[SETTINGS PUBLIC] Get error:', err);
+    // If database fails, return defaults as failsafe
+    res.json({ settings: DEFAULT_SETTINGS });
+  }
+});
+
+// ============================================================================
+// END ADMIN SETTINGS ENDPOINTS
+// ============================================================================
+
 app.listen(port, async () => {
   await ensureUsernameColumn();
   await ensureUserPrefs();

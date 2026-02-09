@@ -271,3 +271,33 @@ CREATE TABLE password_resets (
 
 CREATE INDEX password_resets_user_idx ON password_resets (user_id, created_at DESC);
 CREATE INDEX password_resets_token_idx ON password_resets (token_hash);
+-- Track Leitner mastery milestones
+CREATE TABLE IF NOT EXISTS leitner_milestones (
+  id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  set_id uuid NOT NULL REFERENCES learning_box_sets(id) ON DELETE CASCADE,
+  milestone int NOT NULL, -- 25, 50, 75, 100
+  reached_at timestamptz NOT NULL DEFAULT now(),
+  total_questions int NOT NULL,
+  mastered_questions int NOT NULL,
+  session_count int DEFAULT 0,
+  days_taken int DEFAULT 0,
+  UNIQUE(user_id, set_id, milestone)
+);
+
+CREATE INDEX leitner_milestones_user_set_idx ON leitner_milestones(user_id, set_id);
+
+-- Track Leitner session stats for completion screen
+CREATE TABLE IF NOT EXISTS leitner_stats (
+  user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  set_id uuid NOT NULL REFERENCES learning_box_sets(id) ON DELETE CASCADE,
+  started_at timestamptz NOT NULL DEFAULT now(),
+  last_session_at timestamptz NOT NULL DEFAULT now(),
+  session_count int NOT NULL DEFAULT 0,
+  total_correct int NOT NULL DEFAULT 0,
+  total_wrong int NOT NULL DEFAULT 0,
+  longest_streak_days int NOT NULL DEFAULT 0,
+  current_streak_days int NOT NULL DEFAULT 0,
+  last_activity_date date,
+  PRIMARY KEY(user_id, set_id)
+);
