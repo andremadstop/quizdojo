@@ -40,6 +40,13 @@ body.auth-required #profileGate{display:flex}
   margin:0;
 }
 
+.gate-subtitle-brand{
+  font-size:14px;
+  color:var(--muted);
+  margin:8px 0 0 0;
+  font-weight:400;
+}
+
 /* Gate Auth Box - Compact & Centered */
 .gate-box{
   width:min(380px, 100%);

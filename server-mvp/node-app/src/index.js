@@ -1136,7 +1136,7 @@ function mustAuth() {
 }
 
 app.get('/', (_req, res) => {
-  res.status(200).send('Prüfungstrainer API is running. Use /health for status.');
+  res.status(200).send('QuizDojo API is running. Use /health for status.');
 });
 app.get('/health', (_req, res) => res.json({ ok: true }));
 
@@ -2102,7 +2102,7 @@ async function sendMagicLinkEmail(email, code, token) {
   <table style="width:100%; max-width:600px; margin:40px auto; background:white; border-radius:8px; overflow:hidden;">
     <tr>
       <td style="padding:40px; text-align:center; background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-        <h1 style="margin:0; color:white; font-size:24px;">🏋️ Prüfungstrainer</h1>
+        <h1 style="margin:0; color:white; font-size:24px;">🥋 QuizDojo</h1>
       </td>
     </tr>
     <tr>
@@ -2152,7 +2152,7 @@ async function sendMagicLinkEmail(email, code, token) {
 </html>
 `;
 
-  const text = `Prüfungstrainer - Dein Login
+  const text = `QuizDojo - Dein Login
 
 Wähle eine Option:
 

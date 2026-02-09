@@ -4,7 +4,11 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https: http://localhost:8000 http://127.0.0.1:8000; font-src 'self' data:; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'">
-<title>Prüfungstrainer v42.0</title>
+<title>QuizDojo – Dein interaktiver Prüfungstrainer</title>
+<meta name="description" content="QuizDojo: Moderne Lernplattform mit 6 Quiz-Modi, Swipe-Lernen, Leitner-Boxen und Gamification. Open Source und self-hosted.">
+<meta property="og:title" content="QuizDojo – Dein interaktiver Prüfungstrainer">
+<meta property="og:description" content="Moderne Lernplattform mit 6 Quiz-Modi, Swipe-Lernen, Leitner-Boxen und Gamification.">
+<meta property="og:type" content="website">
 
 <!-- CSS: Variables -->
 <link rel="stylesheet" href="css/variables.css">
@@ -86,7 +90,8 @@
   </div>
 
   <div class="gate-hero">
-    <h1 class="gate-title">🏋️ Prüfungstrainer</h1>
+    <h1 class="gate-title">🥋 QuizDojo</h1>
+    <p class="gate-subtitle-brand">Dein interaktiver Prüfungstrainer</p>
     <p class="gate-subtitle" data-i18n="gate.subtitle">Lerne smarter mit 6 verschiedenen Modi</p>
   </div>
 
@@ -186,7 +191,7 @@
 </div>
 <header>
   <div class="wrap headerbar">
-    <h1 class="header-title">🏋️ Prüfungstrainer v42.0</h1>
+    <h1 class="header-title">🥋 QuizDojo</h1>
     <div class="controls">
       <div class="control-group">
         <button id="btnAccountTop" class="btn iconbtn" title="Account" data-i18n-aria="aria.accountOpen">👤 <span class="badge-dot" id="accountBadge" hidden></span></button>
@@ -1740,7 +1745,7 @@ Nächste Frage
   </section>
 </main>
 <footer data-i18n="footer.credits">
-  Prüfungstrainer v42.0 • MIT • API‑basiert • Made with ❤️ • Credits: Andre Stiebitz
+  QuizDojo v42.0 • GPL‑3.0 • Open Source • Made with ❤️
 </footer>
 <div id="appModal" class="modal-backdrop hidden" aria-hidden="true" role="alertdialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalText">
   <div class="modal" role="document" tabindex="-1">
@@ -2322,7 +2327,7 @@ const I18N = {
     'account.examMarkWrong': 'Falsche merken',
     'account.examMarked': 'Für später markiert:',
     'account.examError': 'Prüfungen konnten nicht geladen werden.',
-    'footer.credits': 'Prüfungstrainer v42.0 • GPL‑3.0 • API‑basiert • Made with ❤️ • Credits: Andre Stiebitz',
+    'footer.credits': 'QuizDojo v42.0 • GPL‑3.0 • Open Source • Made with ❤️',
     'impressum.title': 'Impressum',
     'impressum.subtitle': 'Angaben gemäß § 5 TMG',
     'impressum.body': '[Your Name]<br>Geschwister‑Scholl Str. 32<br>[Your City, Postal Code]<br>E‑Mail: <a href="mailto:contact@example.com">contact@example.com</a>',
@@ -2807,7 +2812,7 @@ const I18N = {
     'account.examMarkWrong': 'Mark wrong',
     'account.examMarked': 'Marked for later:',
     'account.examError': 'Exam history could not be loaded.',
-    'footer.credits': 'Prüfungstrainer v42.0 • GPL‑3.0 • API‑based • Made with ❤️ • Credits: Andre Stiebitz',
+    'footer.credits': 'QuizDojo v42.0 • GPL‑3.0 • Open Source • Made with ❤️',
     'impressum.title': 'Imprint',
     'impressum.subtitle': 'Information in accordance with § 5 TMG',
     'impressum.body': '[Your Name]<br>Geschwister‑Scholl Str. 32<br>[Your City, Postal Code]<br>Email: <a href="mailto:contact@example.com">contact@example.com</a>',
@@ -3292,7 +3297,7 @@ const I18N = {
     'account.examMarkWrong': 'Отметить ошибки',
     'account.examMarked': 'Отмечено для повтора:',
     'account.examError': 'Не удалось загрузить экзамены.',
-    'footer.credits': 'Prüfungstrainer v42.0 • GPL‑3.0 • API‑на основе • Сделано с ❤️ • Credits: Andre Stiebitz',
+    'footer.credits': 'QuizDojo v42.0 • GPL‑3.0 • Open Source • Сделано с ❤️',
     'impressum.title': 'Impressum',
     'impressum.subtitle': 'Сведения в соответствии с § 5 TMG',
     'impressum.body': '[Your Name]<br>Geschwister‑Scholl Str. 32<br>[Your City, Postal Code]<br>Email: <a href="mailto:contact@example.com">contact@example.com</a>',
@@ -7681,10 +7686,10 @@ function normalizeDataset(name, data){
 }
 function downloadPoolCreatorPrompt(){
   const content = [
-    '# Prompt: Eigener Fragenpool für den Prüfungstrainer (DE)',
+    '# Prompt: Eigener Fragenpool für QuizDojo (DE)',
     '',
-    '**Rolle:** Du bist ein Fragenpool‑Generator für den „Prüfungstrainer“.  ',
-    '**Ziel:** Erstelle aus den Antworten des Users eine **gültige JSON‑Datei**, die im Prüfungstrainer **out‑of‑the‑box** funktioniert.',
+    '**Rolle:** Du bist ein Fragenpool‑Generator für QuizDojo.  ',
+    '**Ziel:** Erstelle aus den Antworten des Users eine **gültige JSON‑Datei**, die in QuizDojo **out‑of‑the‑box** funktioniert.',
     '',
     '## 1) Interaktiver Kurz‑Fragebogen',
     'Stelle die folgenden Fragen **nacheinander**. Warte jeweils auf die Antwort. Kurz und selbsterklärend.',
